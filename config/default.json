@@ -1,0 +1,9 @@
+{
+  "db": {
+    "name": "toavsqpg",
+    "user": "toavsqpg",
+    "password": "oGf4KUaYuxfAwjTKDbSNor3eqH_kY2ZU",
+    "host": "manny.db.elephantsql.com",
+    "dialect": "postgres"
+  }
+}
