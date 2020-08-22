@@ -1,4 +1,4 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize, DataTypes, Model } = require("sequelize");
 const config = require("config");
 
 const db = config.get("db");
@@ -7,15 +7,11 @@ const { name, user, password, host, dialect } = db;
 const sequelize = new Sequelize(name, user, password, {
   host,
   dialect
+}, {
+  freezeTableName: true,
+  timeStamps: true
 });
 
-const connectDb = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("Connected to sequelize...");
-  } catch (err) {
-    console.error("Unable to connect to the database:", err);
-  }
-};
+sequelize.sync({ force: true });
 
-module.exports = connectDb;
+module.exports = sequelize;

@@ -2,10 +2,20 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const connectDb = require("./config/db");
+const db = require("./config/db");
 
 // Connect database
-connectDb();
+try {
+  db.authenticate();
+} catch (err) {
+  console.error("Unable to connect to the database:", err);
+}
+
+// Middleware json
+app.use(express.json({ extended: false }));
+
+
+app.use("/api/users", require("./routes/api/users"));
 
 app.get("/", (req, res) => res.send("Working..."));
 
