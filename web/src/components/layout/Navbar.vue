@@ -6,7 +6,7 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
           <router-link tag="b-nav-item" to="/register">Register</router-link>
           <router-link tag="b-nav-item" to="/login">Login</router-link>
         </b-navbar-nav>
