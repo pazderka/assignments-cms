@@ -20,11 +20,11 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
     };
   },
   computed: {
-    ...mapGetters("login", ["getEmail", "getPassword", "getToken"])
+    ...mapGetters("login", ["getEmail", "getPassword", "getToken"]),
   },
   methods: {
     ...mapActions("login", ["sendLogin"]),
@@ -32,11 +32,11 @@ export default {
     handleLogin() {
       const info = {
         email: this.email,
-        password: this.password
+        password: this.password,
       };
 
       this.sendLogin(info);
-    }
+    },
   },
 
   mounted() {
@@ -49,6 +49,6 @@ export default {
     if (token) {
       router.push("/");
     }
-  }
+  },
 };
 </script>

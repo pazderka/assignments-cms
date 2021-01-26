@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <router-view></router-view>
-
     <b-container>
       <div>
         <b-jumbotron class="text-center mt-2">
@@ -17,9 +16,10 @@
           </template>
 
           <template v-slot:lead>
-            <p
-              class="mt-4"
-            >Hello John Doe, informations about your profile could be found below. You are free to edit them.</p>
+            <p class="mt-4">
+              Hello John Doe, informations about your profile could be found
+              below. You are free to edit them.
+            </p>
           </template>
 
           <b-button variant="primary">Edit Profile</b-button>
@@ -47,8 +47,8 @@ export default {
         { full_name: "Dickerson Doe", office: "Bucharest" },
         { full_name: "Larsen Jack", office: "London" },
         { full_name: "Geneva Beck", office: "Prague" },
-        { full_name: "Jami Amy", office: "Oslo" }
-      ]
+        { full_name: "Jami Amy", office: "Oslo" },
+      ],
     };
   },
 
@@ -58,7 +58,7 @@ export default {
       return router.push("/login");
     }
   },
-  name: "Home"
+  name: "Home",
 };
 </script>
 

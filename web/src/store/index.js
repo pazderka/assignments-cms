@@ -1,15 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { IconsPlugin, BootstrapVue } from "bootstrap-vue";
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 import router from "../router";
 import axios from "axios";
 
 Vue.use(Vuex);
-Vue.use(IconsPlugin);
-Vue.use(BootstrapVue);
-
 
 export default new Vuex.Store({
   modules: {

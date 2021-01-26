@@ -15,6 +15,12 @@ const routes = [
     name: "Login",
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/Login.vue")
+  },
+  {
+    path: "/base/assignment-base",
+    name: "AssignmentBase",
+    component: () =>
+      import(/* webpackChunkName: "assignmentBase" */ "../views/bases/AssignmentBase.vue")
   }
 ];
 
