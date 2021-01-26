@@ -28,15 +28,21 @@
         :fields="fields"
       >
         <template #head()="data">
-          <div
-            class="filters d-flex flex-column text-center align-items-center"
-          >
-            <span class="">{{ data.label }}</span>
+          <div class="filters d-flex flex-column text-center">
+            <div class="d-flex justify-content-center align-items-center">
+              <span class="mr-2">{{ data.label }}</span>
+              <b-icon-x-square-fill
+                class="d-none"
+                variant="warning"
+              ></b-icon-x-square-fill>
+            </div>
             <b-button
               v-b-modal="`baseModal`"
               :data-column="data.column"
-              class="btn btn-sm btn-info"
+              :data-columntitle="data.label"
+              class="mt-3 btn btn-sm btn-info"
               @click="updateModalId"
+              :data-columntype="data.field._columnType"
             >
               Filter
             </b-button>
@@ -64,26 +70,32 @@ export default {
         {
           key: "id",
           sortable: true,
+          _columnType: "number",
         },
         {
           key: "status",
           sortable: true,
+          _columnType: "string",
         },
         {
           key: "responsible",
           sortable: true,
+          _columnType: "string",
         },
         {
           key: "delegatedTo",
           sortable: true,
+          _columnType: "string",
         },
         {
           key: "deadline",
           sortable: true,
+          _columnType: "date",
         },
         {
           key: "priority",
           sortable: true,
+          _columnType: "number",
         },
       ],
       items: [
@@ -92,7 +104,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -100,7 +112,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -108,7 +120,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -116,7 +128,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -124,7 +136,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -132,7 +144,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -140,7 +152,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -148,7 +160,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -156,7 +168,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
         {
@@ -164,7 +176,7 @@ export default {
           status: "New",
           responsible: "Macdonald",
           delegatedTo: "Tester",
-          deadline: new Date(Date.now()).toISOString(),
+          deadline: "2021-01-26",
           priority: "Low",
         },
       ],
