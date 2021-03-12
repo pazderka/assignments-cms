@@ -43,11 +43,13 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       'cms': path.resolve(__dirname, 'assets/js/components/'),
       'views': path.resolve(__dirname, 'assets/js/views/'),
+      'projectBase': path.resolve(__dirname, 'assets/js/components/base/projectBase/'),
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
 
   devServer: {
     historyApiFallback: true,
+    contentBase: "./dist"
   },
 };

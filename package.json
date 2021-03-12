@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server",
     "server": "nodemon server",
-    "client": "cd web && yarn serve",
+    "client": "cd web && yarn watch",
     "dev": "concurrently \"yarn server\" \"yarn client\""
   },
   "author": "Pazderka",

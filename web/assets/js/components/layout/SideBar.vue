@@ -14,11 +14,11 @@
           </VListItemIcon>
           <VListItemTitle>Dashboard</VListItemTitle>
         </VListItem>
-        <VListItem to="/assignment-base">
+        <VListItem to="/project-base">
           <VListItemIcon>
             <VIcon>mdi-clipboard-list-outline</VIcon>
           </VListItemIcon>
-          <VListItemTitle>Assignment Base</VListItemTitle>
+          <VListItemTitle>Project Base</VListItemTitle>
         </VListItem>
         <VListItem to="/my-statistics">
           <VListItemIcon>

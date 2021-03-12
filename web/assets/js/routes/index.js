@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Login from 'views/Login';
 import Dashboard from 'views/Dashboard';
+import ProjectBase from 'views/ProjectBase';
 
 Vue.use(VueRouter);
 
@@ -12,9 +12,9 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
+    path: '/project-base',
+    name: 'Project Base',
+    component: ProjectBase
   },
 ];
 

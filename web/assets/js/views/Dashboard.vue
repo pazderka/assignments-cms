@@ -12,7 +12,7 @@
           </ul>
           <div style="width: 100%" class="text-right">
             <VBtn icon>
-              <VIcon>mdi-settings</VIcon>
+              <VIcon color="light-blue">mdi-settings</VIcon>
             </VBtn>
           </div>
         </InfoBox>
@@ -29,13 +29,13 @@
           </ul>
           <div style="width: 100%" class="text-right">
             <VBtn icon>
-              <VIcon>mdi-arrow-right-circle</VIcon>
+              <VIcon color="light-blue">mdi-arrow-right-circle</VIcon>
             </VBtn>
           </div>
         </InfoBox>
       </VCol>
       <VCol cols="12" lg="8">
-        <InfoBox title="Company Sales" subtitle="Data for past 12 months.">
+        <InfoBox title="Your Sales" subtitle="Data for past 12 months.">
           <Chart />
         </InfoBox>
       </VCol>
