@@ -2,33 +2,38 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 const User = require("./User");
 
-class Profile extends Model { }
+class Project extends Model { }
 
-Profile.init({
+Project.init({
   // Model attributes are defined here
-  office: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-
-  position: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
 
-  teamLeader: {
+  priority: {
     type: DataTypes.STRING,
     allowNull: false,
   },
 
-  tasksToday: {
+  progress: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  deadline: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+
+  impact: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
 
 }, {
   sequelize, // We need to pass the connection instance
-  modelName: "Profile" // We need to choose the model name
+  modelName: "Project" // We need to choose the model name
 });
 
-module.exports = Profile;
+module.exports = Project;

@@ -1,5 +1,6 @@
-const { DataTypes, Model } = require("sequelize");
+const { DataTypes, Model, Sequelize } = require("sequelize");
 const sequelize = require("../config/db");
+const Project = require('./Project');
 const Profile = require("./Profile");
 
 class User extends Model { }
@@ -27,8 +28,11 @@ User.init({
   modelName: "User" // We need to choose the model name
 });
 
-// Associate 2 models
+// Associate models
 User.hasOne(Profile);
 Profile.belongsTo(User);
+
+User.hasMany(Project);
+Project.belongsTo(User);
 
 module.exports = User;

@@ -25,10 +25,6 @@ module.exports = merge(common, {
             loader: 'sass-loader',
             options: {
               implementation: require('sass'),
-              indentedSyntax: true, // optional,
-            },
-            options: {
-              implementation: require('sass'),
               sassOptions: {
                 indentedSyntax: false // optional
               },

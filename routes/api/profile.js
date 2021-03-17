@@ -9,7 +9,6 @@ const { check, validationResult } = require("express-validator");
 
 router.get("/me", auth, async (req, res) => {
   try {
-    console.log(req);
     const profile = await Profile.findOne({
       where: {
         id: req.user.id

@@ -1,5 +1,6 @@
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const path = require('path');
 module.exports = {
   entry: {
@@ -36,7 +37,7 @@ module.exports = {
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: './index.html',
-    })
+    }),
   ],
   resolve: {
     alias: {
@@ -50,6 +51,9 @@ module.exports = {
 
   devServer: {
     historyApiFallback: true,
-    contentBase: "./dist"
+    contentBase: "./dist",
+    proxy: {
+      "/api": "http://localhost:5000"
+    }
   },
 };

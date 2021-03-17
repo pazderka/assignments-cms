@@ -9,9 +9,9 @@ export default {
     isLoading: true,
   },
   mutations: {
-    setAuthenticated(state, user) {
-      state.isAuthenticated = true;
-      state.user = user;
+    setAuthenticated(state, userData) {
+      state.isAuthenticated = userData.isAuthenticated;
+      state.user = userData.user;
       state.isLoading = false;
     },
 
@@ -45,6 +45,10 @@ export default {
     async checkLogin(context) {
       const token = localStorage.getItem("token");
       if (!token) {
+        context.commit("setAuthenticated", {
+          isAuthenticated: false,
+          user: null,
+        });
         return;
       }
 
@@ -53,7 +57,10 @@ export default {
       try {
         // Previously logged in
         const { data } = await axios.get("http://localhost:5000/api/auth");
-        context.commit("setAuthenticated", data);
+        context.commit("setAuthenticated", {
+          isAuthenticated: true,
+          user: data,
+        });
       } catch (err) {
         // Not logged in previously
         console.error(err);
