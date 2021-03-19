@@ -28,16 +28,18 @@
           class="elevation-1"
           light
         >
-          <template
-            v-for="h in headers"
-            v-slot:[`header.${h.value}`]="{ header }"
-          >
-            <div :key="h.value" :class="$style.headerFilter">
-              <Modal :column="h.value" />
-              <span>{{ header.text.toUpperCase() }}</span>
-            </div>
+          <!-- eslint-disable-next-line -->
+          <template v-slot:body.prepend>
+            <!-- eslint-disable-next-line -->
+            <tr>
+              <td v-for="header in headers" :key="header.value">
+                <VTextField
+                  :placeholder="`Search ${header.text}`"
+                  v-model="filteredHeaders[header.value]"
+                />
+              </td>
+            </tr>
           </template>
-
           <!-- eslint-disable-next-line -->
           <template v-slot:item.deadline="{ item }">
             {{ format_date(item.deadline) }}
@@ -53,14 +55,14 @@
 
 <script>
 import axios from "axios";
-import Modal from "cms/layout/Modal";
 import Subcontent from "projectBase/Subcontent";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
+import FilterWidget from "projectBase/FilterWidget";
 
 export default {
   components: {
-    Modal,
     Subcontent,
+    FilterWidget,
   },
 
   mixins: [ProjectBaseMixin],
@@ -74,20 +76,62 @@ export default {
     this.isLoading = false;
   },
 
+  computed: {
+    headers() {
+      if (!this.data.length) return;
+      return [
+        {
+          text: "ID",
+          value: "id",
+          filter: (val) => {
+            // It takes even 0, but it doesnt matter, 0 is never a PK
+            if (!this.filteredHeaders.id) return true;
+
+            return val === parseInt(this.filteredHeaders.id);
+          },
+        },
+        {
+          text: "Name",
+          value: "name",
+          filter: (val) => {
+            console.log(this.filteredHeaders.name, val);
+            return true;
+          },
+        },
+        {
+          text: "Priority",
+          value: "priority",
+        },
+        {
+          text: "Progress",
+          value: "progress",
+        },
+        {
+          text: "Deadline",
+          value: "deadline",
+        },
+        {
+          text: "Impact",
+          value: "impact",
+        },
+      ];
+    },
+  },
+
   data() {
     return {
       isLoading: true,
       search: "",
       selectedRow: [],
-      headers: [
-        { text: "ID", value: "id" },
-        { text: "Name", value: "name" },
-        { text: "Priority", value: "priority" },
-        { text: "Progress", value: "progress" },
-        { text: "Deadline", value: "deadline" },
-        { text: "Impact", value: "impact" },
-      ],
       data: [],
+      filteredHeaders: {
+        id: null,
+        name: null,
+        priority: null,
+        progress: null,
+        deadline: null,
+        impact: null,
+      },
     };
   },
   methods: {
@@ -102,6 +146,10 @@ export default {
     row_class() {
       return "projectTableRow";
     },
+
+    filter(options) {
+      console.log(options);
+    },
   },
 };
 </script>
@@ -111,10 +159,6 @@ tr.v-data-table__selected {
   background-color: #03a8f4 !important;
   color: #fff !important;
 }
-
-.projectTableRow td.text-start {
-  text-align: center !important;
-}
 </style>
 
 <style module lang="scss">
@@ -122,29 +166,6 @@ tr.v-data-table__selected {
   tr {
     cursor: pointer;
     transition: background-color ease-in-out 200ms;
-    text-align: center !important;
   }
-
-  th {
-    position: relative;
-    border-top: 1px solid #f3f3f3;
-    border-bottom: 1px solid #f3f3f3;
-    padding: 10px !important;
-    i {
-      position: absolute !important;
-      top: 40%;
-      right: 15%;
-    }
-  }
-}
-
-.headerFilter {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 10px 0;
 }
 </style>

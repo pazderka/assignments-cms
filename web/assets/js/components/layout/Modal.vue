@@ -55,7 +55,10 @@ export default {
     },
 
     filter() {
-      console.log(this.column, this.value);
+      this.$emit("filter", {
+        column: this.column,
+        value: this.value,
+      });
     },
   },
 };
