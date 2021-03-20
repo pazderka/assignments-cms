@@ -6,18 +6,17 @@
           >Your projects
           <VSpacer />
           <VTextField
-            v-model="search"
             append-icon="mdi-magnify"
             label="search"
             single-line
             hide-details
+            @input="globalFilter"
           />
         </VCardTitle>
         <VDataTable
           :headers="headers"
           :items="data"
           :items-per-page="5"
-          :search="search"
           :class="$style.projectTable"
           :single-select="true"
           :item-class="row_class"
@@ -31,11 +30,34 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:body.prepend>
             <!-- eslint-disable-next-line -->
-            <tr>
+            <tr :class="$style.filters">
               <td v-for="header in headers" :key="header.value">
                 <VTextField
-                  :placeholder="`Search ${header.text}`"
+                  v-if="header.widget === 'text'"
                   v-model="filteredHeaders[header.value]"
+                  :placeholder="`Search ${header.text}`"
+                  type="text"
+                  append-icon="mdi-card-text-outline"
+                />
+                <VTextField
+                  v-if="header.widget === 'number'"
+                  v-model="filteredHeaders[header.value]"
+                  :placeholder="`Search ${header.text}`"
+                  type="number"
+                  append-icon="mdi-counter"
+                />
+                <VSelect
+                  v-if="header.widget === 'dropdown'"
+                  v-model="filteredHeaders[header.value]"
+                  :placeholder="`Search ${header.text}`"
+                  :items="getColumnData(header)"
+                  multiple
+                  append-icon="mdi-menu-down-outline"
+                />
+                <DatePickerMenu
+                  v-if="header.widget === 'date'"
+                  v-model="filteredHeaders[header.value]"
+                  :placeholder="`Search ${header.text}`"
                 />
               </td>
             </tr>
@@ -56,6 +78,7 @@
 <script>
 import axios from "axios";
 import Subcontent from "projectBase/Subcontent";
+import DatePickerMenu from "cms/layout/DatePickerMenu";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
 import FilterWidget from "projectBase/FilterWidget";
 
@@ -63,6 +86,7 @@ export default {
   components: {
     Subcontent,
     FilterWidget,
+    DatePickerMenu,
   },
 
   mixins: [ProjectBaseMixin],
@@ -74,6 +98,8 @@ export default {
     this.data = projects;
 
     this.isLoading = false;
+
+    this.originalData = projects;
   },
 
   computed: {
@@ -83,36 +109,92 @@ export default {
         {
           text: "ID",
           value: "id",
-          filter: (val) => {
-            // It takes even 0, but it doesnt matter, 0 is never a PK
-            if (!this.filteredHeaders.id) return true;
+          widget: "number",
+          filter: (value) => {
+            if (!this.filteredHeaders.id) {
+              return true;
+            }
 
-            return val === parseInt(this.filteredHeaders.id);
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.id.toLowerCase());
           },
         },
         {
           text: "Name",
           value: "name",
-          filter: (val) => {
-            console.log(this.filteredHeaders.name, val);
-            return true;
+          widget: "text",
+          filter: (value) => {
+            if (!this.filteredHeaders.name) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.name.toLowerCase());
           },
         },
         {
           text: "Priority",
           value: "priority",
+          widget: "dropdown",
+          filter: (value) => {
+            if (!this.filteredHeaders.priority.length) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(...this.filteredHeaders.priority);
+          },
         },
         {
           text: "Progress",
           value: "progress",
+          widget: "number",
+          filter: (value) => {
+            if (!this.filteredHeaders.progress) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.progress.toLowerCase());
+          },
         },
         {
           text: "Deadline",
           value: "deadline",
+          widget: "date",
+          filter: (value) => {
+            if (!this.filteredHeaders.deadline) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.deadline.toLowerCase());
+          },
         },
         {
           text: "Impact",
           value: "impact",
+          widget: "dropdown",
+          filter: (value) => {
+            if (!this.filteredHeaders.impact) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.impact.toLowerCase());
+          },
         },
       ];
     },
@@ -125,12 +207,12 @@ export default {
       selectedRow: [],
       data: [],
       filteredHeaders: {
-        id: null,
-        name: null,
-        priority: null,
-        progress: null,
-        deadline: null,
-        impact: null,
+        id: "",
+        name: "",
+        priority: [],
+        progress: "",
+        deadline: "",
+        impact: "",
       },
     };
   },
@@ -150,6 +232,26 @@ export default {
     filter(options) {
       console.log(options);
     },
+
+    globalFilter(value) {
+      if (value.length === 0) {
+        this.data = this.originalData;
+        return;
+      }
+
+      this.data = this.data.filter((row) =>
+        Object.values(row).some((cell) =>
+          cell
+            .toString()
+            .toLowerCase()
+            .trim()
+            .includes(value.toString().toLowerCase().trim())
+        )
+      );
+    },
+    getColumnData() {
+      return ["high", "test1", "test2"];
+    },
   },
 };
 </script>
@@ -163,6 +265,10 @@ tr.v-data-table__selected {
 
 <style module lang="scss">
 .projectTable {
+  .filters {
+    background-color: #f3f3f3;
+  }
+
   tr {
     cursor: pointer;
     transition: background-color ease-in-out 200ms;

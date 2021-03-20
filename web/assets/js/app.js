@@ -9,6 +9,7 @@ import vuetify from './plugins/vuetify';
 import router from './routes';
 import { store } from './store';
 
+
 new Vue({
   router,
   vuetify,
