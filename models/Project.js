@@ -31,6 +31,21 @@ Project.init({
     allowNull: false,
   },
 
+  assignee: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
+  permission: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
+  delegatedTo: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
+
 }, {
   sequelize, // We need to pass the connection instance
   modelName: "Project" // We need to choose the model name

@@ -9,6 +9,30 @@ const jwtSecret = config.get("jwtSecret");
 
 const User = require("../../models/User");
 
+const auth = require("../../middleware/auth");
+
+
+router.get("/", auth, async (req, res) => {
+  const all = await User.findAll();
+  res.status(200).json(all);
+});
+
+
+router.delete("/:UserId", auth, async (req, res) => {
+  const id = req.params.UserId;
+  await User.destroy({
+    where: {
+      id
+    }
+  });
+
+  res.status(200).json({
+    msg: "User deleted"
+  });
+
+
+});
+
 
 router.post("/", [
   check("firstName", "First name is required.").not().isEmpty(),
@@ -16,7 +40,9 @@ router.post("/", [
   check("email", "Please include a valid email.").isEmail(),
   check("password", "Please enter a password with more than 6 characters").isLength({
     min: 6
-  })
+  }),
+  check("permission", "Please submit user permission.").not().isEmpty(),
+
 ], async (req, res) => {
   const errors = validationResult(req);
 
@@ -26,9 +52,10 @@ router.post("/", [
   }
 
   // Check if user exists
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, permission } = req.body;
 
   try {
+
     const user = await User.findOne({
       where: {
         email: email
@@ -40,14 +67,15 @@ router.post("/", [
       return res.status(400).json({ errors: [{ msg: "User already exists." }] });
     }
 
-
     // User doesnt exist - we can create him
 
     // Secure pw first - generate salt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const created = await User.create({ firstName, lastName, email, password: hashedPassword });
+    const created = await User.create({ firstName, lastName, email, password: hashedPassword, permission });
+
+
 
     const payload = {
       user: {

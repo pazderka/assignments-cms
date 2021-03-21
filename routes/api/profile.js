@@ -37,12 +37,17 @@ router.post("/", [auth, [
   try {
     const profile = await Profile.create({
       office: req.body.office,
-      UserId: req.user.id
+      position: req.body.position,
+      teamLeader: req.body.teamLeader,
+      tasksToday: req.body.tasksToday,
+      UserId: req.user.id,
     });
+
+
 
     res.status(200).json(profile);
   } catch (err) {
-
+    res.status(500).json(err);
   }
 });
 

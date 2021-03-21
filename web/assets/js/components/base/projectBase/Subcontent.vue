@@ -3,7 +3,7 @@
     <VToolbar color="light-blue" dark>
       <template v-slot:extension>
         <VTabs v-model="model" slider-color="amber darken-2">
-          <VTab> Item </VTab>
+          <VTab> Info </VTab>
           <VTab> Item </VTab>
           <VTab> Item </VTab>
         </VTabs>

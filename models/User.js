@@ -22,7 +22,7 @@ User.init({
   password: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
 }, {
   sequelize, // We need to pass the connection instance
   modelName: "User" // We need to choose the model name

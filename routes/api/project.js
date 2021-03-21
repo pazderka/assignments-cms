@@ -27,6 +27,20 @@ router.get("/:ProjectId", auth, async (req, res) => {
   res.status(200).json(assignemnt);
 });
 
+// Delete by id
+router.delete("/:ProjectId", auth, async (req, res) => {
+  const id = req.params.ProjectId;
+  await Project.destroy({
+    where: {
+      id
+    }
+  });
+
+  res.status(200).json({
+    msg: "Deleted"
+  });
+});
+
 // Get all
 router.get("/", auth, async (req, res) => {
   const all = await Project.findAll();
@@ -35,11 +49,12 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { name, priority, progress, deadline, impact } = req.body;
+  const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo } = req.body;
+
   const UserId = req.user.id;
 
   const project = await Project.create({
-    name, priority, progress, deadline, impact, UserId
+    name, priority, progress, deadline, impact, UserId, assignee, permission, delegatedTo
   });
 
   res.status(200).json(project);

@@ -7,9 +7,10 @@
           <VSpacer />
           <VTextField
             append-icon="mdi-magnify"
-            label="search"
+            label="Global Search..."
             single-line
             hide-details
+            v-model="search"
             @input="globalFilter"
           />
         </VCardTitle>
@@ -57,7 +58,9 @@
                 <DatePickerMenu
                   v-if="header.widget === 'date'"
                   v-model="filteredHeaders[header.value]"
+                  :value="filteredHeaders[header.value]"
                   :placeholder="`Search ${header.text}`"
+                  @filter="dateFilter"
                 />
               </td>
             </tr>
@@ -77,6 +80,7 @@
 
 <script>
 import axios from "axios";
+import moment from "moment-timezone";
 import Subcontent from "projectBase/Subcontent";
 import DatePickerMenu from "cms/layout/DatePickerMenu";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
@@ -97,9 +101,29 @@ export default {
     const projects = response.data;
     this.data = projects;
 
+    console.log(this.data);
+
     this.isLoading = false;
 
     this.originalData = projects;
+
+    const params = new URLSearchParams(location.search);
+
+    for (const param of params) {
+      const key = param[0];
+      const value = param[1];
+
+      if (key === "deadline") {
+        this.filteredHeaders.deadline = value.split(",");
+      } else {
+        this.filteredHeaders[key] = value;
+      }
+    }
+
+    if (params.has("search")) {
+      this.search = params.get("search");
+      this.globalFilter(params.get("search"));
+    }
   },
 
   computed: {
@@ -171,14 +195,14 @@ export default {
           value: "deadline",
           widget: "date",
           filter: (value) => {
-            if (!this.filteredHeaders.deadline) {
+            if (!this.filteredHeaders.deadline.length) {
               return true;
             }
 
-            return value
-              .toString()
-              .toLowerCase()
-              .includes(this.filteredHeaders.deadline.toLowerCase());
+            return moment(value).isBetween(
+              this.filteredHeaders.deadline[0],
+              this.filteredHeaders.deadline[1]
+            );
           },
         },
         {
@@ -186,14 +210,29 @@ export default {
           value: "impact",
           widget: "dropdown",
           filter: (value) => {
-            if (!this.filteredHeaders.impact) {
+            if (!this.filteredHeaders.impact.length) {
               return true;
             }
 
             return value
               .toString()
               .toLowerCase()
-              .includes(this.filteredHeaders.impact.toLowerCase());
+              .includes(...this.filteredHeaders.impact);
+          },
+        },
+        {
+          text: "Assignee",
+          value: "assignee",
+          widget: "text",
+          filter: (value) => {
+            if (!this.filteredHeaders.assignee) {
+              return true;
+            }
+
+            return value
+              .toString()
+              .toLowerCase()
+              .includes(this.filteredHeaders.assignee.toLowerCase());
           },
         },
       ];
@@ -211,11 +250,47 @@ export default {
         name: "",
         priority: [],
         progress: "",
-        deadline: "",
+        deadline: [],
         impact: "",
+        assignee: "",
+        permission: "",
+        delegatedTo: "",
       },
     };
   },
+
+  watch: {
+    filteredHeaders: {
+      deep: true,
+      handler(new_value) {
+        const params = new URLSearchParams(location.search);
+        const map = new Map(Object.entries(this.filteredHeaders));
+
+        history.pushState(null, null, "/project-base");
+
+        for (const item of map) {
+          const key = item[0];
+          const value = item[1];
+
+          if (value.length !== 0) {
+            params.set(key, value);
+          } else {
+            params.delete(key);
+          }
+        }
+
+        if (
+          params.toString().length !== 0 &&
+          !params.toString().includes("MouseEvent")
+        ) {
+          history.pushState(null, null, `?${params.toString()}`);
+        } else {
+          history.pushState(null, null, `/project-base`);
+        }
+      },
+    },
+  },
+
   methods: {
     selectRow(rowData, row) {
       const isSelected = row.isSelected ? false : true;
@@ -229,15 +304,28 @@ export default {
       return "projectTableRow";
     },
 
-    filter(options) {
-      console.log(options);
+    dateFilter(options) {
+      this.filteredHeaders.deadline = options;
     },
 
     globalFilter(value) {
+      const params = new URLSearchParams(location.search);
+
       if (value.length === 0) {
         this.data = this.originalData;
+        params.delete("search");
+
+        if (params.toString().length === 0) {
+          history.pushState(null, null, `/project-base`);
+        } else {
+          history.pushState(null, null, `?${params.toString()}`);
+        }
+
         return;
       }
+
+      params.set("search", value);
+      history.pushState(null, null, `?${params.toString()}`);
 
       this.data = this.data.filter((row) =>
         Object.values(row).some((cell) =>
@@ -249,8 +337,8 @@ export default {
         )
       );
     },
-    getColumnData() {
-      return ["high", "test1", "test2"];
+    getColumnData({ value }) {
+      return [...new Set(this.data.map((val) => val[value]))];
     },
   },
 };
