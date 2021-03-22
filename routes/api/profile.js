@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
+const Project = require("../../models/Project");
 
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
@@ -16,7 +17,7 @@ router.get("/me", auth, async (req, res) => {
     });
 
     if (!profile) {
-      return res.status(400).json({ msg: "There is no profile for this user" });
+      return res.json({ msg: "There is no profile for this user" });
     }
 
     res.json(profile);
@@ -26,7 +27,8 @@ router.get("/me", auth, async (req, res) => {
 });
 
 router.post("/", [auth, [
-  check("office", "Office is required").not().isEmpty()
+  check("office", "Office is required").not().isEmpty(),
+  check("teamLeader", "Team leader is required").not().isEmpty(),
 ]], async (req, res) => {
   const errors = validationResult(req);
 
@@ -34,13 +36,25 @@ router.post("/", [auth, [
     return res.status(400).json({ errors: errors.array() });
   }
 
+  const UserId = req.user.id;
+
+  const user = await User.findByPk(UserId);
+  const userEmail = user.email;
+
+  const projects = await Project.findAndCountAll({
+    where: {
+      assignee: userEmail
+    }
+  });
+
+
   try {
     const profile = await Profile.create({
       office: req.body.office,
-      position: req.body.position,
+      position: req.body.position || "employee",
       teamLeader: req.body.teamLeader,
-      tasksToday: req.body.tasksToday,
-      UserId: req.user.id,
+      tasksToday: projects.count,
+      UserId
     });
 
 

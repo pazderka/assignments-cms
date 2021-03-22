@@ -5,6 +5,7 @@
       :size="50"
       color="primary"
       indeterminate
+      :class="$style.loader"
     />
     <div v-else>
       <VContainer fluid v-if="isAuthenticated">
@@ -51,3 +52,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" module>
+.loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

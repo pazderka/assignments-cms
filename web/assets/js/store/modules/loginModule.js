@@ -13,12 +13,14 @@ export default {
       state.isAuthenticated = userData.isAuthenticated;
       state.user = userData.user;
       state.isLoading = false;
+
     },
 
     login(state, token) {
       state.isAuthenticated = true;
       localStorage.setItem("token", token);
       axios.defaults.headers.common["x-auth-token"] = token;
+      location.reload();
     },
 
     logout(state) {
@@ -26,7 +28,8 @@ export default {
       state.isAuthenticated = false;
       localStorage.removeItem("token");
       delete axios.defaults.headers.common["x-auth-token"];
-    }
+      location.reload();
+    },
   },
   actions: {
     async login(context, payload) {

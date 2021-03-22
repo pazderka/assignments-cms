@@ -7,28 +7,31 @@
             <li><strong>Office</strong>: {{ office }}</li>
             <li><strong>Position</strong>: {{ position }}</li>
             <li><strong>Team Leader</strong>: {{ teamLeader }}</li>
-            <li><strong>Tasks for today</strong>: {{ tasksToday }}</li>
+            <li class="pb-5">
+              <strong>Tasks for today</strong>: {{ tasksToday }}
+            </li>
           </ul>
-          <div style="width: 100%" class="text-right">
-            <VBtn icon>
-              <VIcon color="light-blue">mdi-settings</VIcon>
-            </VBtn>
-          </div>
         </InfoBox>
         <InfoBox
-          title="Current Assignment"
-          subtitle="Assignment you are currently working on"
+          v-if="isCurrentProject"
+          title="Current project"
+          subtitle="Your newest project"
         >
           <ul :class="$style.infoList">
             <li><strong>Name</strong>: {{ name }}</li>
             <li><strong>Priority</strong>: {{ priority }}</li>
             <li><strong>Progress</strong>: {{ progress }}%</li>
-            <li><strong>Deadline</strong>: {{ deadline }}</li>
+            <li>
+              <strong>Deadline</strong>:
+              {{ formattedDeadline }}
+            </li>
             <li><strong>Impact</strong>: {{ impact }}</li>
           </ul>
           <div style="width: 100%" class="text-right">
             <VBtn icon>
-              <VIcon color="light-blue">mdi-arrow-right-circle</VIcon>
+              <VIcon @click="redirect" color="light-blue"
+                >mdi-arrow-right-circle</VIcon
+              >
             </VBtn>
           </div>
         </InfoBox>
@@ -47,6 +50,7 @@
 import InfoBox from "cms/layout/InfoBox";
 import Chart from "cms/layout/Chart";
 import axios from "axios";
+import moment from "moment-timezone";
 
 export default {
   name: "Dashboard",
@@ -66,14 +70,35 @@ export default {
       progress: null,
       deadline: null,
       impact: null,
+      projectId: null,
+      isCurrentProject: false,
     };
+  },
+
+  methods: {
+    redirect() {
+      this.$router.push(`/project-base?row=${this.projectId}`);
+    },
+  },
+
+  computed: {
+    formattedDeadline() {
+      return moment(this.deadline).format("YYYY/MM/DD");
+    },
   },
 
   async mounted() {
     // Get profile
-    const { data } = await axios.get("/api/profile/me", {
+    const profile = await axios.get("/api/profile/me", {
       "x-auth-token": localStorage.getItem("token"),
     });
+
+    if (profile.data.msg === "There is no profile for this user") {
+      this.$router.push("/profile");
+      return;
+    }
+
+    const data = profile.data;
 
     for (const item in data) {
       this[item] = data[item];
@@ -85,11 +110,18 @@ export default {
       "x-auth-token": localStorage.getItem("token"),
     });
 
+    if (response.data.length === 0) {
+      return;
+    }
+
     const project = response.data[0];
 
     for (const item in project) {
       this[item] = project[item];
     }
+
+    this.projectId = project.id;
+    this.isCurrentProject = true;
   },
 };
 </script>

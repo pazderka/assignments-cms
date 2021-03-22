@@ -2,7 +2,7 @@
   <VFooter app class="pa-0" color="light-blue">
     <VCard flat tile class="mx-auto light-blue white--text text-center">
       <VCardText class="white--text">
-        @{{ new Date().getFullYear() }} — <strong>Company name</strong>
+        @{{ new Date().getFullYear() }} — <strong>CMS</strong>
       </VCardText>
     </VCard>
   </VFooter>

@@ -1,6 +1,12 @@
 <template>
   <VRow>
     <VCol cols="12">
+      <AddProjectForm />
+      <VBtn dark color="amber darken-2" @click="clearFilters"
+        >Clear filters</VBtn
+      >
+    </VCol>
+    <VCol cols="12">
       <VCard>
         <VCardTitle
           >Your projects
@@ -22,9 +28,10 @@
           :single-select="true"
           :item-class="row_class"
           @click:row="selectRow"
-          item-key="name"
+          item-key="id"
           :loading="isLoading"
           v-model="selectedRow"
+          :expanded.sync="expandedRows"
           class="elevation-1"
           light
         >
@@ -69,11 +76,30 @@
           <template v-slot:item.deadline="{ item }">
             {{ format_date(item.deadline) }}
           </template>
+          <!-- eslint-disable-next-line -->
+          <template v-slot:item.expand="{ item }">
+            <VBtn
+              v-if="item.delegatedTo !== null"
+              icon
+              color="amber darken-2"
+              dark
+              @click="expand($event, item)"
+            >
+              <VIcon>mdi-arrow-down-circle</VIcon>
+            </VBtn>
+          </template>
+
+          <template v-slot:expanded-item="{ headers }">
+            <td :colspan="headers.length">
+              This project wasnt originally yours, you were delegated to handle
+              it.
+            </td>
+          </template>
         </VDataTable>
       </VCard>
     </VCol>
     <VCol cols="12" v-if="selectedRow.length">
-      <Subcontent />
+      <Subcontent @updateTable="updateTable" :rowId="selectedRow[0].id" />
     </VCol>
   </VRow>
 </template>
@@ -85,23 +111,24 @@ import Subcontent from "projectBase/Subcontent";
 import DatePickerMenu from "cms/layout/DatePickerMenu";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
 import FilterWidget from "projectBase/FilterWidget";
+import AddProjectForm from "projectBase/AddProjectForm";
 
 export default {
   components: {
     Subcontent,
     FilterWidget,
     DatePickerMenu,
+    AddProjectForm,
   },
 
   mixins: [ProjectBaseMixin],
 
   async mounted() {
+    this.originalFilters = this.filteredHeaders;
     const url = this.getProjectsUrl();
     const response = await axios.get(url);
     const projects = response.data;
     this.data = projects;
-
-    console.log(this.data);
 
     this.isLoading = false;
 
@@ -115,6 +142,8 @@ export default {
 
       if (key === "deadline") {
         this.filteredHeaders.deadline = value.split(",");
+      } else if (key === "impact") {
+        this.filteredHeaders.impact = value.split(",");
       } else {
         this.filteredHeaders[key] = value;
       }
@@ -123,6 +152,12 @@ export default {
     if (params.has("search")) {
       this.search = params.get("search");
       this.globalFilter(params.get("search"));
+    }
+
+    if (params.has("row")) {
+      this.selectedRow.push({
+        id: params.get("row"),
+      });
     }
   },
 
@@ -169,10 +204,9 @@ export default {
               return true;
             }
 
-            return value
-              .toString()
-              .toLowerCase()
-              .includes(...this.filteredHeaders.priority);
+            return this.filteredHeaders.priority.includes(
+              value.toString().toLowerCase().trim()
+            );
           },
         },
         {
@@ -214,10 +248,9 @@ export default {
               return true;
             }
 
-            return value
-              .toString()
-              .toLowerCase()
-              .includes(...this.filteredHeaders.impact);
+            return this.filteredHeaders.impact.includes(
+              value.toString().trim()
+            );
           },
         },
         {
@@ -235,6 +268,12 @@ export default {
               .includes(this.filteredHeaders.assignee.toLowerCase());
           },
         },
+        {
+          text: "Details",
+          value: "expand",
+          sortable: false,
+          filterable: false,
+        },
       ];
     },
   },
@@ -244,6 +283,7 @@ export default {
       isLoading: true,
       search: "",
       selectedRow: [],
+      expandedRows: [],
       data: [],
       filteredHeaders: {
         id: "",
@@ -251,7 +291,7 @@ export default {
         priority: [],
         progress: "",
         deadline: [],
-        impact: "",
+        impact: [],
         assignee: "",
         permission: "",
         delegatedTo: "",
@@ -292,7 +332,7 @@ export default {
   },
 
   methods: {
-    selectRow(rowData, row) {
+    async selectRow(rowData, row) {
       const isSelected = row.isSelected ? false : true;
       row.select(isSelected);
 
@@ -305,7 +345,11 @@ export default {
     },
 
     dateFilter(options) {
-      this.filteredHeaders.deadline = options;
+      if (Array.isArray(options)) {
+        this.filteredHeaders.deadline = options;
+      } else {
+        this.filteredHeaders.deadline = [];
+      }
     },
 
     globalFilter(value) {
@@ -327,18 +371,50 @@ export default {
       params.set("search", value);
       history.pushState(null, null, `?${params.toString()}`);
 
-      this.data = this.data.filter((row) =>
-        Object.values(row).some((cell) =>
-          cell
-            .toString()
+      this.data = this.data.filter((row) => {
+        return Object.values(row).some((cell) => {
+          return JSON.stringify(cell)
             .toLowerCase()
             .trim()
-            .includes(value.toString().toLowerCase().trim())
-        )
-      );
+            .includes(value.toString().toLowerCase().trim());
+        });
+      });
     },
     getColumnData({ value }) {
       return [...new Set(this.data.map((val) => val[value]))];
+    },
+
+    async updateTable() {
+      this.isLoading = true;
+      const url = this.getProjectsUrl();
+      const response = await axios.get(url);
+      const projects = response.data;
+      this.data = projects;
+
+      this.isLoading = false;
+    },
+
+    expand(event, item) {
+      event.stopImmediatePropagation();
+      const index = this.expandedRows.findIndex((row) => row.id === item.id);
+
+      if (index === -1) {
+        this.expandedRows.push(item);
+      } else {
+        this.expandedRows.splice(index, 1);
+      }
+    },
+
+    clearFilters() {
+      this.search = "";
+      for (const key in this.filteredHeaders) {
+        // Prio deadline impax
+        if (key === "prio" || key === "deadline" || key === "impact") {
+          this.filteredHeaders[key] = [];
+        } else {
+          this.filteredHeaders[key] = "";
+        }
+      }
     },
   },
 };

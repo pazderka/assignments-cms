@@ -8,6 +8,7 @@ const config = require("config");
 const jwtSecret = config.get("jwtSecret");
 
 const User = require("../../models/User");
+const Project = require("../../models/Project");
 
 const auth = require("../../middleware/auth");
 
@@ -31,6 +32,31 @@ router.delete("/:UserId", auth, async (req, res) => {
   });
 
 
+});
+
+router.post("/permission", auth, async (req, res) => {
+  const UserId = req.user.id;
+
+  const user = await User.findByPk(UserId);
+
+  res.status(200).json(user.permission);
+});
+
+router.put("/delegate", auth, async (req, res) => {
+  const projectId = req.body.projectId;
+  const delegatedTo = req.body.delegatedTo;
+  const user = await User.findOne({
+    where: {
+      email: delegatedTo
+    }
+  });
+
+  const project = await Project.findByPk(projectId);
+  project.assignee = delegatedTo;
+  project.delegatedTo = delegatedTo;
+  project.UserId = user.id;
+  await project.save();
+  res.status(200).json(project);
 });
 
 

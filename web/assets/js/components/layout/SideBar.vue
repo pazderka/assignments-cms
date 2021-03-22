@@ -26,12 +26,6 @@
           </VListItemIcon>
           <VListItemTitle>My Statistics</VListItemTitle>
         </VListItem>
-        <VListItem to="/company-statistics">
-          <VListItemIcon>
-            <VIcon> mdi-domain </VIcon>
-          </VListItemIcon>
-          <VListItemTitle>Company Statistics</VListItemTitle>
-        </VListItem>
       </VListItemGroup>
     </VList>
   </VNavigationDrawer>

@@ -49,15 +49,43 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo } = req.body;
+  const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description } = req.body;
 
   const UserId = req.user.id;
 
   const project = await Project.create({
-    name, priority, progress, deadline, impact, UserId, assignee, permission, delegatedTo
+    name, priority, progress, deadline, impact, UserId, assignee, permission, delegatedTo, description
   });
 
   res.status(200).json(project);
+});
+
+// Get project description
+router.post("/description", auth, async (req, res) => {
+  const projectId = req.body.projectId;
+  const project = await Project.findByPk(projectId);
+
+  res.status(200).json(project.description);
+});
+
+// Update project
+router.put("/update", auth, async (req, res) => {
+  const { data } = req.body;
+  const projectId = data[0].projectId;
+
+  const project = await Project.findByPk(projectId);
+
+  for (const item in data[0]) {
+    if (item !== "projectId") {
+      project[item] = data[0][item];
+    }
+  }
+
+  await project.save();
+  res.status(200).json({
+    msg: "success",
+    updatedProject: project
+  });
 });
 
 module.exports = router;

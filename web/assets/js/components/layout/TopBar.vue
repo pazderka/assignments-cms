@@ -18,7 +18,7 @@
         <template v-slot:activator="{ on, attrs }">
           <VBtn color="amber darken-2" dark v-bind="attrs" v-on="on">
             <VIcon>mdi-account</VIcon>
-            <span>John Doe</span>
+            <span>{{ user.firstName }} {{ user.lastName }}</span>
           </VBtn>
         </template>
         <VCard>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -59,6 +59,10 @@ export default {
   methods: {
     ...mapActions("layout", ["toggleDrawer"]),
     ...mapActions("login", ["logout"]),
+  },
+
+  computed: {
+    ...mapGetters("login", ["user"]),
   },
 };
 </script>

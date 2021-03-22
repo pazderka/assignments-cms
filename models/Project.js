@@ -44,7 +44,13 @@ Project.init({
   delegatedTo: {
     type: DataTypes.STRING,
     allowNull: true
-  }
+  },
+
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+
 
 }, {
   sequelize, // We need to pass the connection instance
