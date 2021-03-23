@@ -3,13 +3,15 @@ const router = express.Router();
 const auth = require("../../middleware/auth");
 
 const Project = require("../../models/Project");
+const User = require("../../models/User");
 
 // Get by user
-router.get("/user", auth, async (req, res) => {
-  const UserId = req.user.id;
+router.post("/user", auth, async (req, res) => {
+  const assignee = req.body.assignee;
+
   const projects = await Project.findAll({
     where: {
-      UserId
+      assignee
     },
     attributes: {
       exclude: ["UserId", "createdAt", "updatedAt"]
@@ -51,10 +53,8 @@ router.get("/", auth, async (req, res) => {
 router.post("/", auth, async (req, res) => {
   const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description } = req.body;
 
-  const UserId = req.user.id;
-
   const project = await Project.create({
-    name, priority, progress, deadline, impact, UserId, assignee, permission, delegatedTo, description
+    name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description
   });
 
   res.status(200).json(project);

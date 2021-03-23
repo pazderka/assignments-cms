@@ -22,9 +22,14 @@
                   required
                   label="Progress"
                 />
-                <DatePickerMenuForm :value.sync="form.deadline" />
+                <DatePickerMenuForm @update="updateDate" />
                 <VTextField v-model="form.impact" required label="Impact" />
-                <VTextField v-model="form.assignee" required label="Assignee" />
+                <VSelect
+                  v-model="form.assignee"
+                  :items="assignees"
+                  required
+                  label="Assignee"
+                />
                 <VTextField
                   v-model="form.permission"
                   required
@@ -51,6 +56,7 @@
 
 <script>
 import DatePickerMenuForm from "cms/layout/DatePickerMenuForm";
+import axios from "axios";
 export default {
   components: {
     DatePickerMenuForm,
@@ -59,6 +65,8 @@ export default {
   data() {
     return {
       dialog: false,
+      assignees: null,
+
       form: {
         name: null,
         priority: null,
@@ -72,9 +80,20 @@ export default {
     };
   },
 
+  async mounted() {
+    const { data } = await axios.get("/api/users");
+    this.assignees = data.map((row) => row.email);
+  },
+
   methods: {
-    submit() {
-      console.log("submit");
+    async submit() {
+      await axios.post("/api/project", this.form);
+      this.dialog = false;
+      this.$emit("updateTable");
+    },
+
+    updateDate(new_value) {
+      this.form.deadline = new_value;
     },
   },
 };

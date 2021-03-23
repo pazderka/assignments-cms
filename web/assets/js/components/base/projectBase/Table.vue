@@ -1,10 +1,19 @@
 <template>
   <VRow>
     <VCol cols="12">
-      <AddProjectForm />
-      <VBtn dark color="amber darken-2" @click="clearFilters"
-        >Clear filters</VBtn
-      >
+      <div class="d-flex justify-space-between">
+        <div>
+          <AddProjectForm @updateTable="updateTable" />
+          <VBtn dark color="amber darken-2" @click="clearFilters"
+            >Clear filters</VBtn
+          >
+        </div>
+        <div>
+          <VBtn @click="exportCsv" color="amber darken-2" outlined
+            >Export CSV</VBtn
+          >
+        </div>
+      </div>
     </VCol>
     <VCol cols="12">
       <VCard>
@@ -17,6 +26,7 @@
             single-line
             hide-details
             v-model="search"
+            ref="globalSearch"
             @input="globalFilter"
           />
         </VCardTitle>
@@ -112,6 +122,7 @@ import DatePickerMenu from "cms/layout/DatePickerMenu";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
 import FilterWidget from "projectBase/FilterWidget";
 import AddProjectForm from "projectBase/AddProjectForm";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -126,7 +137,9 @@ export default {
   async mounted() {
     this.originalFilters = this.filteredHeaders;
     const url = this.getProjectsUrl();
-    const response = await axios.get(url);
+    const response = await axios.post(url, {
+      assignee: this.user.email,
+    });
     const projects = response.data;
     this.data = projects;
 
@@ -162,6 +175,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters("login", ["user"]),
     headers() {
       if (!this.data.length) return;
       return [
@@ -273,6 +287,7 @@ export default {
           value: "expand",
           sortable: false,
           filterable: false,
+          exportable: false,
         },
       ];
     },
@@ -387,7 +402,9 @@ export default {
     async updateTable() {
       this.isLoading = true;
       const url = this.getProjectsUrl();
-      const response = await axios.get(url);
+      const response = await axios.post(url, {
+        assignee: this.user.email,
+      });
       const projects = response.data;
       this.data = projects;
 
@@ -409,12 +426,46 @@ export default {
       this.search = "";
       for (const key in this.filteredHeaders) {
         // Prio deadline impax
-        if (key === "prio" || key === "deadline" || key === "impact") {
+        if (key === "priority" || key === "deadline" || key === "impact") {
           this.filteredHeaders[key] = [];
         } else {
           this.filteredHeaders[key] = "";
         }
       }
+
+      this.$refs.globalSearch.$listeners.input("");
+    },
+
+    exportCsv() {
+      const exportHeaders =
+        this.headers
+          .filter((header) => header.exportable !== false)
+          .map((header) => header.text)
+          .join(";") + "\n";
+
+      const exportData = this.data
+        .map((row) => {
+          delete row.delegatedTo;
+          delete row.permission;
+          delete row.description;
+          return Object.values(row);
+        })
+        .map((row) => row.join(";") + "\n");
+
+      const exported = [
+        exportHeaders,
+        exportData.toString().replaceAll(",", ""),
+      ];
+
+      const blob = new Blob(exported, { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "export.csv");
+      link.click();
+
+      URL.revokeObjectURL(url);
     },
   },
 };

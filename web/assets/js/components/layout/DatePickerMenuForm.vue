@@ -3,7 +3,6 @@
     ref="menu"
     v-model="menu"
     :close-on-content-click="false"
-    :return-value.sync="date"
     transition="scale-transition"
     offset-y
     min-width="auto"
@@ -19,10 +18,7 @@
         required
       />
     </template>
-    <VDatePicker v-model="date" no-title scrollable>
-      <VSpacer />
-      <VBtn text color="primary" @click="menu = false"> Cancel </VBtn>
-      <VBtn text color="primary" @click="$refs.menu.save(date)"> OK </VBtn>
+    <VDatePicker @change="onChange" v-model="date" no-title scrollable>
     </VDatePicker>
   </VMenu>
 </template>
@@ -34,6 +30,14 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       menu: false,
     };
+  },
+
+  methods: {
+    onChange(new_value) {
+      this.date = new_value;
+      this.menu = false;
+      this.$emit("update", new_value);
+    },
   },
 };
 </script>
