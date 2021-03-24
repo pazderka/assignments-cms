@@ -17,9 +17,13 @@
             </VForm>
           </VCardText>
           <VCardActions>
-            <VBtn @click="updateProfile" dark color="light-blue"
-              >Update profile</VBtn
-            >
+            <VRow>
+              <VCol cols="12" class="text-center pb-5">
+                <VBtn @click="verifyProfile" dark color="light-blue"
+                  >Verify profile</VBtn
+                >
+              </VCol>
+            </VRow>
           </VCardActions>
         </VCard>
       </VCol>
@@ -38,8 +42,11 @@ export default {
   },
 
   methods: {
-    async updateProfile() {
-      const response = await axios.post("/api/profile");
+    async verifyProfile() {
+      const response = await axios.post("/api/profile", {
+        office: this.office,
+        teamLeader: this.teamLeader,
+      });
     },
   },
 };

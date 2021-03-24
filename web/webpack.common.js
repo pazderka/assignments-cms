@@ -45,6 +45,7 @@ module.exports = {
       'cms': path.resolve(__dirname, 'assets/js/components/'),
       'views': path.resolve(__dirname, 'assets/js/views/'),
       'projectBase': path.resolve(__dirname, 'assets/js/components/base/projectBase/'),
+      'employeeBase': path.resolve(__dirname, 'assets/js/components/base/employeeBase/')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },

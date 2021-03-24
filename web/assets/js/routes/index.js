@@ -3,14 +3,18 @@ import VueRouter from 'vue-router';
 import Dashboard from 'views/Dashboard';
 import ProjectBase from 'views/ProjectBase';
 import Profile from 'views/Profile';
+import Employees from 'views/Employees';
+import axios from "axios";
 
 Vue.use(VueRouter);
+
+import { store } from "../store";
 
 const routes = [
   {
     path: '/',
     name: 'Dashboard',
-    component: Dashboard
+    component: Dashboard,
   },
   {
     path: '/project-base',
@@ -21,6 +25,11 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: Profile
+  },
+  {
+    path: "/employees",
+    name: "Employees",
+    component: Employees,
   }
 ];
 

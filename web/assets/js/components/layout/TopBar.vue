@@ -6,9 +6,7 @@
         <RouterLink to="/" :class="$style.headerTitle">CMS</RouterLink>
       </VToolbarTitle>
       <VSpacer />
-      <VBtn icon>
-        <VIcon>mdi-earth</VIcon>
-      </VBtn>
+      <LanguagePicker />
       <VMenu
         v-model="userMenu"
         :close-on-content-click="false"
@@ -49,8 +47,13 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import LanguagePicker from "cms/layout/LanguagePicker";
 
 export default {
+  components: {
+    LanguagePicker,
+  },
+
   data() {
     return {
       userMenu: false,

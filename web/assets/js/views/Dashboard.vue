@@ -4,11 +4,21 @@
       <VCol cols="12" lg="4">
         <InfoBox title="Credentials" subtitle="Your company status">
           <ul :class="$style.infoList">
-            <li><strong>Office</strong>: {{ office }}</li>
-            <li><strong>Position</strong>: {{ position }}</li>
-            <li><strong>Team Leader</strong>: {{ teamLeader }}</li>
+            <li>
+              <strong>{{ $t("dashboard.office") }}</strong
+              >: {{ office }}
+            </li>
+            <li>
+              <strong>{{ $t("dashboard.position") }}</strong
+              >: {{ position }}
+            </li>
+            <li>
+              <strong>{{ $t("dashboard.team_leader") }}</strong
+              >: {{ teamLeader }}
+            </li>
             <li class="pb-5">
-              <strong>Tasks for today</strong>: {{ tasksToday }}
+              <strong>{{ $t("dashboard.tasks_for_today") }}</strong
+              >: {{ tasksToday }}
             </li>
           </ul>
         </InfoBox>
@@ -37,7 +47,10 @@
         </InfoBox>
       </VCol>
       <VCol cols="12" lg="8">
-        <InfoBox title="Your Projects" subtitle="Completed tasks by month">
+        <InfoBox
+          :title="$t('dashboard.your_projects')"
+          :subtitle="$t('dashboard.your_projects_subtitle')"
+        >
           <Chart />
         </InfoBox>
       </VCol>

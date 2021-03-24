@@ -18,6 +18,7 @@
         <Login />
       </VContainer>
     </div>
+    <notifications position="bottom left" />
   </VApp>
 </template>
 

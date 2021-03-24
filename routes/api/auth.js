@@ -10,6 +10,12 @@ const jwtSecret = config.get("jwtSecret");
 
 const User = require("../../models/User");
 
+/**
+ * @path : "/"
+ * @req : get
+ * @isAuth : true
+ * @purpose :  Get user by ID
+ */
 router.get("/", auth, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
@@ -19,6 +25,12 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+/**
+ * @path : "/"
+ * @req : post
+ * @isAuth : true
+ * @purpose :  Create new user by HR member
+ */
 router.post("/", [
   check("email", "Please include a valid email.").isEmail(),
   check("password", "Password is required.").exists()
@@ -45,6 +57,7 @@ router.post("/", [
       return res.status(400).json({ errors: [{ msg: "Invalid credentials." }] });
     }
 
+    // Check if passwords match
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -53,10 +66,11 @@ router.post("/", [
 
     const payload = {
       user: {
-        id: user.id // this is given to cause its auto-generated in db (callback)
+        id: user.id // this is given to because its auto-generated in db (callback)
       }
     };
 
+    // TODO: Set lower size of expiration token
     jwt.sign(payload, jwtSecret, { expiresIn: 3600000 }, (err, token) => {
       if (err) throw err;
 

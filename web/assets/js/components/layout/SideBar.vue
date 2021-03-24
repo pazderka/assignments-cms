@@ -20,6 +20,12 @@
           </VListItemIcon>
           <VListItemTitle>Project Base</VListItemTitle>
         </VListItem>
+        <VListItem to="/employees">
+          <VListItemIcon>
+            <VIcon>mdi-account-group</VIcon>
+          </VListItemIcon>
+          <VListItemTitle>Employees</VListItemTitle>
+        </VListItem>
         <VListItem to="/my-statistics">
           <VListItemIcon>
             <VIcon>mdi-account-star</VIcon>

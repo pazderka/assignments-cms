@@ -13,7 +13,6 @@ export default {
       state.isAuthenticated = userData.isAuthenticated;
       state.user = userData.user;
       state.isLoading = false;
-
     },
 
     login(state, token) {
