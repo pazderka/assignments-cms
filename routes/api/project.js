@@ -4,6 +4,7 @@ const auth = require("../../middleware/auth");
 
 const Project = require("../../models/Project");
 const User = require("../../models/User");
+const Profile = require("../../models/Profile");
 
 // Get by user
 router.post("/user", auth, async (req, res) => {
@@ -14,7 +15,7 @@ router.post("/user", auth, async (req, res) => {
       assignee
     },
     attributes: {
-      exclude: ["UserId", "createdAt", "updatedAt"]
+      exclude: ["UserId"]
     }
   });
 
@@ -50,8 +51,35 @@ router.get("/", auth, async (req, res) => {
   res.status(200).json(all);
 });
 
+router.post("/last", auth, async (req, res) => {
+  const assignee = req.body.assignee;
+  const lastProject = await Project.findAll({
+    limit: 1,
+    where: {
+      assignee,
+    },
+    order: [
+      ["createdAt", "DESC"]
+    ]
+  });
+  res.status(200).json(lastProject);
+});
+
 router.post("/", auth, async (req, res) => {
   const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description } = req.body;
+
+  const user = await User.findOne({
+    where: {
+      email: assignee
+    }
+  });
+
+  const profile = await Profile.findByPk(user.id);
+
+  const tasksToday = parseInt(profile.tasksToday);
+
+  profile.tasksToday = tasksToday + 1;
+  await profile.save();
 
   const project = await Project.create({
     name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description

@@ -5,69 +5,66 @@ export default {
   namespaced: true,
   state: {
     user: null,
+    profile: null,
     isAuthenticated: false,
     isLoading: true,
   },
   mutations: {
-    setAuthenticated(state, userData) {
-      state.isAuthenticated = userData.isAuthenticated;
-      state.user = userData.user;
+    login(state, payload) {
+      localStorage.setItem("token", payload);
+    },
+    checkLogin(state, payload) {
+      if (!payload) {
+        state.isLoading = false;
+        return;
+      }
+
+      state.user = payload.user;
+      state.profile = payload.profile;
+      state.isAuthenticated = true;
       state.isLoading = false;
     },
-
-    login(state, token) {
-      state.isAuthenticated = true;
-      localStorage.setItem("token", token);
-      axios.defaults.headers.common["x-auth-token"] = token;
-      location.reload();
-    },
-
     logout(state) {
-      state.user = null;
-      state.isAuthenticated = false;
       localStorage.removeItem("token");
+      state.user = null;
+      state.profile = null;
+      state.isAuthenticated = false;
       delete axios.defaults.headers.common["x-auth-token"];
-      location.reload();
-    },
+    }
   },
   actions: {
     async login(context, payload) {
-      // Its submit validation
       try {
-        const { data } = await axios.post("http://localhost:5000/api/auth", payload);
+        const { data } = await axios.post("/api/auth", payload);
         const token = data.token;
+
+        axios.defaults.headers.common["x-auth-token"] = token;
+
+        const user = await axios.get("/api/auth");
+        const profile = await axios.get("/api/profile/me");
         context.commit("login", token);
+        context.commit("checkLogin", { user: user.data, profile: profile.data });
       } catch (err) {
         console.error(err);
         return;
       }
-
     },
-
     async checkLogin(context) {
       const token = localStorage.getItem("token");
-      if (!token) {
-        context.commit("setAuthenticated", {
-          isAuthenticated: false,
-          user: null,
-        });
-        return;
-      }
 
+      // It means uset not logged in
+      if (token === null) {
+        context.commit("checkLogin", false);
+        return;
+      };
+
+      // User logged in, set token to header
       axios.defaults.headers.common["x-auth-token"] = token;
 
-      try {
-        // Previously logged in
-        const { data } = await axios.get("http://localhost:5000/api/auth");
-        context.commit("setAuthenticated", {
-          isAuthenticated: true,
-          user: data,
-        });
-      } catch (err) {
-        // Not logged in previously
-        console.error(err);
-        return;
-      }
+      const user = await axios.get("/api/auth");
+      const profile = await axios.get("/api/profile/me");
+
+      context.commit("checkLogin", { user: user.data, profile: profile.data });
     },
 
     logout(context) {
@@ -78,5 +75,6 @@ export default {
     isAuthenticated: state => state.isAuthenticated,
     isLoading: state => state.isLoading,
     user: state => state.user,
+    profile: state => state.profile
   },
 };

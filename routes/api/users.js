@@ -34,6 +34,21 @@ router.delete("/:UserId", auth, async (req, res) => {
 
 });
 
+router.get("/manager", auth, async (req, res) => {
+  try {
+    const teamLeaders = await User.findAll({
+      where: {
+        permission: "manager"
+      }
+    });
+    res.status(200).json(teamLeaders);
+  } catch {
+    res.status(500).json({
+      msg: "Something went wrong."
+    });
+  }
+});
+
 router.post("/permission", auth, async (req, res) => {
   const UserId = req.user.id;
 

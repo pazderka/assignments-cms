@@ -53,7 +53,6 @@
 <script>
 import LanguagePicker from "cms/layout/LanguagePicker";
 import { mapActions } from "vuex";
-import axios from "axios";
 
 export default {
   components: {
@@ -71,11 +70,15 @@ export default {
     };
   },
 
+  mounted() {
+    this.$refs.loginForm.validate();
+  },
+
   methods: {
     async submitForm() {
       if (!this.$refs.loginForm.validate()) return;
 
-      this.login(this.form);
+      await this.login(this.form);
     },
 
     ...mapActions("login", ["login"]),

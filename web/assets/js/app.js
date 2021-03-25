@@ -97,12 +97,17 @@ const messages = {
 };
 
 const i18n = new VueI18n({
-  locale: "cz",
+  locale: "en",
   messages
 });
 
 Vue.prototype.$LANGUAGES = ["en", "cz"];
 Vue.prototype.$PERMISSIONS = ["admin", "manager", "hr", "employee"];
+Vue.prototype.$OFFICES = ["Prague", "London", "Bucharest", "Los Angeles"];
+Vue.prototype.$MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+Vue.prototype.$STATUSES = ["New", "In Progress", "Completed"];
+Vue.prototype.$PRIORITIES = ["High", "Medium", "Low"];
+Vue.prototype.$DEPARTMENTS = ["IT", "HR", "MKT"];
 
 new Vue({
   router,

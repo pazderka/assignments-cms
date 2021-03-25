@@ -12,25 +12,25 @@
           <VListItemIcon>
             <VIcon> mdi-desktop-mac-dashboard </VIcon>
           </VListItemIcon>
-          <VListItemTitle>Dashboard</VListItemTitle>
+          <VListItemTitle>{{ $t("dashboard.dashboard") }}</VListItemTitle>
         </VListItem>
         <VListItem to="/project-base">
           <VListItemIcon>
             <VIcon>mdi-clipboard-list-outline</VIcon>
           </VListItemIcon>
-          <VListItemTitle>Project Base</VListItemTitle>
+          <VListItemTitle>{{ $t("dashboard.project_base") }}</VListItemTitle>
         </VListItem>
         <VListItem to="/employees">
           <VListItemIcon>
             <VIcon>mdi-account-group</VIcon>
           </VListItemIcon>
-          <VListItemTitle>Employees</VListItemTitle>
+          <VListItemTitle>{{ $t("dashboard.employees") }}</VListItemTitle>
         </VListItem>
         <VListItem to="/my-statistics">
           <VListItemIcon>
             <VIcon>mdi-account-star</VIcon>
           </VListItemIcon>
-          <VListItemTitle>My Statistics</VListItemTitle>
+          <VListItemTitle>{{ $t("dashboard.my_statistics") }}</VListItemTitle>
         </VListItem>
       </VListItemGroup>
     </VList>

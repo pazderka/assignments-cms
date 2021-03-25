@@ -2,40 +2,43 @@
   <div>
     <VRow justify="center" align="center">
       <VCol cols="12" lg="4">
-        <InfoBox title="Credentials" subtitle="Your company status">
+        <InfoBox
+          :title="$t('dashboard.credentials')"
+          :subtitle="$t('dashboard.credentials_subtitle')"
+        >
           <ul :class="$style.infoList">
             <li>
               <strong>{{ $t("dashboard.office") }}</strong
-              >: {{ office }}
+              >: {{ profile.office }}
             </li>
             <li>
               <strong>{{ $t("dashboard.position") }}</strong
-              >: {{ position }}
+              >: {{ profile.position }}
             </li>
             <li>
               <strong>{{ $t("dashboard.team_leader") }}</strong
-              >: {{ teamLeader }}
+              >: {{ profile.teamLeader }}
             </li>
             <li class="pb-5">
               <strong>{{ $t("dashboard.tasks_for_today") }}</strong
-              >: {{ tasksToday }}
+              >: {{ profile.tasksToday }}
             </li>
           </ul>
         </InfoBox>
         <InfoBox
-          v-if="isCurrentProject"
-          title="Current project"
+          v-if="lastProject"
+          title="Your last project"
           subtitle="Your newest project"
         >
           <ul :class="$style.infoList">
-            <li><strong>Name</strong>: {{ name }}</li>
-            <li><strong>Priority</strong>: {{ priority }}</li>
-            <li><strong>Progress</strong>: {{ progress }}%</li>
+            <li><strong>Name</strong>: {{ lastProject.name }}</li>
+            <li><strong>Priority</strong>: {{ lastProject.priority }}</li>
+            <li><strong>Progress</strong>: {{ lastProject.progress }}%</li>
             <li>
               <strong>Deadline</strong>:
               {{ formattedDeadline }}
             </li>
-            <li><strong>Impact</strong>: {{ impact }}</li>
+            <li><strong>Impact</strong>: {{ lastProject.impact }}</li>
           </ul>
           <div style="width: 100%" class="text-right">
             <VBtn icon>
@@ -62,8 +65,9 @@
 <script>
 import InfoBox from "cms/layout/InfoBox";
 import Chart from "cms/layout/Chart";
-import axios from "axios";
 import moment from "moment-timezone";
+import { mapGetters } from "vuex";
+import axios from "axios";
 
 export default {
   name: "Dashboard",
@@ -72,69 +76,35 @@ export default {
     Chart,
   },
 
+  async created() {
+    if (this.profile.msg === "There is no profile for this user") {
+      this.$router.push("/profile");
+      return;
+    }
+
+    const lastProject = await axios.post("/api/project/last", {
+      assignee: this.user.email,
+    });
+    this.lastProject = lastProject.data[0];
+  },
+
   data() {
     return {
-      office: null,
-      position: null,
-      teamLeader: null,
-      tasksToday: null,
-      name: null,
-      priority: null,
-      progress: null,
-      deadline: null,
-      impact: null,
-      projectId: null,
-      isCurrentProject: false,
+      lastProject: null,
     };
   },
 
   methods: {
     redirect() {
-      this.$router.push(`/project-base?row=${this.projectId}`);
+      this.$router.push(`/project-base?row=${this.lastProject.id}`);
     },
   },
 
   computed: {
+    ...mapGetters("login", ["profile", "user"]),
     formattedDeadline() {
-      return moment(this.deadline).format("YYYY/MM/DD");
+      return moment(this.lastProject.deadline).format("YYYY/MM/DD");
     },
-  },
-
-  async mounted() {
-    // Get profile
-    const profile = await axios.get("/api/profile/me", {
-      "x-auth-token": localStorage.getItem("token"),
-    });
-
-    if (profile.data.msg === "There is no profile for this user") {
-      this.$router.push("/profile");
-      return;
-    }
-
-    const data = profile.data;
-
-    for (const item in data) {
-      this[item] = data[item];
-    }
-
-    // Get current assignment
-    // TODO some logic here
-    const response = await axios.get("/api/project/user", {
-      "x-auth-token": localStorage.getItem("token"),
-    });
-
-    if (response.data.length === 0) {
-      return;
-    }
-
-    const project = response.data[0];
-
-    for (const item in project) {
-      this[item] = project[item];
-    }
-
-    this.projectId = project.id;
-    this.isCurrentProject = true;
   },
 };
 </script>

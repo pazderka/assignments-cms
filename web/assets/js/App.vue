@@ -49,7 +49,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("login", ["isAuthenticated", "isLoading"]),
+    ...mapGetters("login", ["isAuthenticated", "isLoading", "profile"]),
   },
 };
 </script>

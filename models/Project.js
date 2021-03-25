@@ -51,6 +51,10 @@ Project.init({
     allowNull: false
   },
 
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
 
 }, {
   sequelize, // We need to pass the connection instance

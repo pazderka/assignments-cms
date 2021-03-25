@@ -169,7 +169,7 @@ export default {
 
     if (params.has("row")) {
       this.selectedRow.push({
-        id: params.get("row"),
+        id: +params.get("row"),
       });
     }
   },
@@ -448,6 +448,8 @@ export default {
           delete row.delegatedTo;
           delete row.permission;
           delete row.description;
+          delete row.createdAt;
+          delete row.updatedAt;
           return Object.values(row);
         })
         .map((row) => row.join(";") + "\n");
