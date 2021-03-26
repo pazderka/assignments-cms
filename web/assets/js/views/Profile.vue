@@ -18,7 +18,7 @@
             >
               <VSelect
                 :rules="required_rule"
-                v-model="office"
+                v-model="form.office"
                 required
                 label="Office"
                 :items="$OFFICES"
@@ -30,13 +30,13 @@
                 item-value="email"
                 return-object
                 single-line
-                v-model="manager"
+                v-model="form.manager"
                 required
                 label="Manager"
               />
               <VTextField
                 :rules="required_rule"
-                v-model="password"
+                v-model="form.password"
                 type="password"
                 required
                 label="New Password"
@@ -67,7 +67,11 @@
 <script>
 import axios from "axios";
 import { mapGetters } from "vuex";
+import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
+
 export default {
+  mixins: [NotificationMixin],
+
   async created() {
     if (this.profile.msg !== "There is no profile for this user") {
       this.$router.push("/");
@@ -84,9 +88,11 @@ export default {
   data() {
     return {
       managers: [],
-      office: null,
-      manager: null,
-      password: null,
+      form: {
+        office: null,
+        manager: null,
+        password: null,
+      },
       isValid: false,
       required_rule: [(val) => !!val || this.$t("common.field_required")],
     };
@@ -103,19 +109,16 @@ export default {
       }
 
       try {
-        await axios.post("/api/profile", {
-          office: this.office,
-          teamLeader: this.manager.email,
-          password: this.password,
-        });
+        const form = {
+          office: this.form.office,
+          password: this.form.password,
+          manager: this.form.manager.email,
+        };
+        await axios.post("/api/profile", form);
         location.reload();
       } catch (err) {
         console.error(err);
-        this.$notify({
-          title: "Something went wrong",
-          text: "Please contact IT support",
-          type: "error",
-        });
+        this.notifyMessage(MESSAGE_TYPES.ERROR.text);
       }
     },
   },

@@ -6,7 +6,7 @@
         <RouterLink to="/" :class="$style.headerTitle">CMS</RouterLink>
       </VToolbarTitle>
       <VSpacer />
-      <LanguagePicker />
+      <LanguagePicker :isDark="true" />
       <VMenu
         v-model="userMenu"
         :close-on-content-click="false"

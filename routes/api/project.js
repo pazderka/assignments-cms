@@ -6,21 +6,38 @@ const Project = require("../../models/Project");
 const User = require("../../models/User");
 const Profile = require("../../models/Profile");
 
+const sequelize = require("sequelize");
+
 // Get by user
 router.post("/user", auth, async (req, res) => {
   const assignee = req.body.assignee;
 
   const projects = await Project.findAll({
     where: {
-      assignee
+      assignee,
+      status: {
+        [sequelize.Op.not]: "Completed"
+      }
     },
     attributes: {
       exclude: ["UserId"]
     }
   });
 
+  console.log(projects);
+
 
   res.status(200).json(projects);
+});
+
+// Complete project
+router.put("/complete/:ProjectId", auth, async (req, res) => {
+  const id = req.params.ProjectId;
+  const project = await Project.findByPk(id);
+
+  project.status = "Completed";
+  await project.save();
+  res.status(200).json("Project completed");
 });
 
 // Get by id
@@ -57,6 +74,9 @@ router.post("/last", auth, async (req, res) => {
     limit: 1,
     where: {
       assignee,
+      status: {
+        [sequelize.Op.not]: "Completed"
+      }
     },
     order: [
       ["createdAt", "DESC"]
@@ -66,7 +86,7 @@ router.post("/last", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description } = req.body;
+  const { name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description, status } = req.body;
 
   const user = await User.findOne({
     where: {
@@ -82,7 +102,7 @@ router.post("/", auth, async (req, res) => {
   await profile.save();
 
   const project = await Project.create({
-    name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description
+    name, priority, progress, deadline, impact, assignee, permission, delegatedTo, description, status
   });
 
   res.status(200).json(project);
@@ -102,6 +122,8 @@ router.put("/update", auth, async (req, res) => {
   const projectId = data[0].projectId;
 
   const project = await Project.findByPk(projectId);
+
+  console.log(data);
 
   for (const item in data[0]) {
     if (item !== "projectId") {

@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export default {
   namespaced: true,
   state: {
@@ -34,20 +33,15 @@ export default {
   },
   actions: {
     async login(context, payload) {
-      try {
-        const { data } = await axios.post("/api/auth", payload);
-        const token = data.token;
+      const { data } = await axios.post("/api/auth", payload);
+      const token = data.token;
 
-        axios.defaults.headers.common["x-auth-token"] = token;
+      axios.defaults.headers.common["x-auth-token"] = token;
 
-        const user = await axios.get("/api/auth");
-        const profile = await axios.get("/api/profile/me");
-        context.commit("login", token);
-        context.commit("checkLogin", { user: user.data, profile: profile.data });
-      } catch (err) {
-        console.error(err);
-        return;
-      }
+      const user = await axios.get("/api/auth");
+      const profile = await axios.get("/api/profile/me");
+      context.commit("login", token);
+      context.commit("checkLogin", { user: user.data, profile: profile.data });
     },
     async checkLogin(context) {
       const token = localStorage.getItem("token");

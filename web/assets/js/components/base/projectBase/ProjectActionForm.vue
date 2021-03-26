@@ -3,6 +3,9 @@
     <template v-slot:activator="{ on, attrs }">
       <VRow>
         <VCol cols="12">
+          <VBtn data-id="complete" @click="completeProject" dark color="success"
+            >Complete</VBtn
+          >
           <VBtn
             @click="openDialog"
             dark
@@ -29,7 +32,7 @@
     </template>
     <VCard>
       <VCardTitle>
-        <span class="headline">Project {{ rowId }} - {{ dialogType }}</span>
+        <span :class="$style.head">Project {{ rowId }} - {{ dialogType }}</span>
       </VCardTitle>
       <VCardText>
         <VContainer>
@@ -46,7 +49,12 @@
               </VForm>
               <VForm v-if="dialogType === 'update'">
                 <VTextField v-model="form.name" required label="Name" />
-                <VTextField v-model="form.priority" required label="Priority" />
+                <VSelect
+                  :items="$PRIORITIES"
+                  v-model="form.priority"
+                  required
+                  label="Priority"
+                />
                 <VTextField
                   v-model="form.progress"
                   type="number"
@@ -54,23 +62,40 @@
                   label="Progress"
                 />
                 <DatePickerMenuForm :value.sync="form.deadline" />
-                <VTextField v-model="form.impact" required label="Impact" />
-                <VTextField
+                <VSelect
+                  :items="$DEPARTMENTS"
+                  v-model="form.impact"
+                  required
+                  label="Impact"
+                />
+                <VSelect
+                  :items="assignees"
                   v-model="form.assignee"
                   required
                   type="email"
                   label="Assignee"
                 />
-                <VTextarea outlined required label="Description" />
+                <VTextarea
+                  v-model="form.description"
+                  outlined
+                  required
+                  label="Description"
+                />
               </VForm>
             </VCol>
           </VRow>
         </VContainer>
+        <VSpacer />
       </VCardText>
       <VCardActions>
-        <VSpacer />
-        <VBtn dark color="amber darken-2" @click="dialog = false">Close</VBtn>
-        <VBtn dark color="light-blue" @click="submit">Submit</VBtn>
+        <VContainer>
+          <div class="justify-space-between d-flex">
+            <VBtn dark color="amber darken-2" @click="dialog = false"
+              >Close</VBtn
+            >
+            <VBtn dark color="light-blue" @click="submit">Submit</VBtn>
+          </div>
+        </VContainer>
       </VCardActions>
     </VCard>
   </VDialog>
@@ -96,6 +121,7 @@ export default {
     return {
       dialog: null,
       dialogType: null,
+      assignees: null,
       form: {
         name: null,
         priority: null,
@@ -105,12 +131,17 @@ export default {
         assignee: null,
         description: null,
         projectId: this.rowId,
+        status: null,
       },
       delegatedEmployee: null,
       delegatedEmployees: [],
     };
   },
 
+  async mounted() {
+    const { data } = await axios.get("/api/users");
+    this.assignees = data.map((row) => row.email);
+  },
   methods: {
     async openDialog(e) {
       let id;
@@ -132,9 +163,7 @@ export default {
           }
         }
       } else if (this.dialogType === "delegate") {
-        const response = await axios.get("/api/users", {
-          "x-auth-token": localStorage.getItem("token"),
-        });
+        const response = await axios.get("/api/users");
 
         const employees = response.data.map((employee) => employee.email);
         this.delegatedEmployees = employees;
@@ -143,15 +172,17 @@ export default {
     async submit() {
       if (this.dialogType === "update") {
         await axios.put("/api/project/update", {
-          "x-auth-token": localStorage.getItem("token"),
           data: [this.form],
         });
       } else if (this.dialogType === "delegate") {
-        await axios.put("/api/users/delegate", {
-          "x-auth-token": localStorage.getItem("token"),
-          projectId: this.rowId,
-          delegateTo: this.delegatedEmployee,
-        });
+        try {
+          await axios.put("/api/users/delegate", {
+            projectId: this.rowId,
+            delegatedTo: this.delegatedEmployee,
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
 
       this.dialog = false;
@@ -167,9 +198,22 @@ export default {
         this.$emit("updateTable");
       }
     },
+    async completeProject() {
+      const shouldComplete = confirm(
+        `Are you sure you want to mark project #${this.rowId} as completed?`
+      );
+      if (shouldComplete) {
+        await axios.put(`/api/project/complete/${this.rowId}`);
+        this.$emit("updateTable");
+      }
+    },
   },
 };
 </script>
 
-<style>
+<style lang="scss" module>
+.head {
+  text-align: center;
+  width: 100%;
+}
 </style>

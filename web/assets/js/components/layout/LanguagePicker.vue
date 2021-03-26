@@ -1,7 +1,7 @@
 <template>
   <VMenu>
     <template v-slot:activator="{ on, attrs }">
-      <VBtn icon dark v-bind="attrs" v-on="on">
+      <VBtn icon :dark="isDark" v-bind="attrs" v-on="on">
         <VIcon>mdi-earth</VIcon>
       </VBtn>
     </template>
@@ -24,12 +24,21 @@
 
 <script>
 export default {
+  props: {
+    isDark: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
+
   methods: {
     updateLanguage(new_value) {
       const lang = this.$LANGUAGES[new_value];
 
       if (lang !== undefined) {
-        this.$root._i18n.locale = lang;
+        //this.$root._i18n.locale = lang;
+        localStorage.setItem("lang", lang);
+        location.reload();
       }
     },
   },

@@ -16,7 +16,7 @@ Profile.init({
     allowNull: false,
   },
 
-  teamLeader: {
+  manager: {
     type: DataTypes.STRING,
     allowNull: false,
   },

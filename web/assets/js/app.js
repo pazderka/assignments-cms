@@ -29,7 +29,19 @@ const messages = {
       dashboard: "Dashboard",
       project_base: "Project Base",
       employees: "Employees",
-      my_statistics: "My statistics"
+      my_statistics: "My statistics",
+      last_project: "Last project",
+      last_project_subtitle: "Last assigned project",
+      statistic_base: "Statistic Base"
+    },
+    project_base: {
+      delegated_text: "This project wasnt originally yours, you were delegated to handle it.",
+      clear_filters: "Clear Filters",
+      export_csv: "Export CSV",
+      your_projects: "Your projects",
+      global_search: "Global search...",
+      add_project: "Add project",
+      add_new_project: "Add new project",
     },
     translations: {
       cz: "Česky",
@@ -49,10 +61,20 @@ const messages = {
       reset: "Reset",
       email: "Email",
       password: "Password",
-      create: "Create",
       first_name: "First name",
       last_name: "Last Name",
       permission: "Permission",
+      name: "Name",
+      priority: "Priority",
+      progress: "Progress",
+      deadline: "Deadline",
+      impact: "Impact",
+      search: "Search",
+      assignee: "Assignee",
+      description: "Description",
+      status: "Status",
+      close: "Close",
+      submit: "Submit"
     }
   },
   cz: {
@@ -68,7 +90,19 @@ const messages = {
       dashboard: "Domů",
       project_base: "Řízení projektů",
       employees: "Zaměstnanci",
-      my_statistics: "Moje statistiky"
+      my_statistics: "Moje statistiky",
+      last_project: "Poslední projekt",
+      last_project_subtitle: "Poslední přiřazený projekt",
+      statistic_base: "Firemní statistiky"
+    },
+    project_base: {
+      delegated_text: "Tento projekt nebyl původně Váš, byl na Vás delegován.",
+      clear_filters: "Vyčistit filtry",
+      export_csv: "Export CSV",
+      your_projects: "Vaše projekty",
+      global_search: "Globální vyhledávání...",
+      add_project: "Přidat projekt",
+      add_new_project: "Přidat nový projekt",
     },
     translations: {
       cz: "Czech",
@@ -88,16 +122,26 @@ const messages = {
       reset: "Resetovat",
       email: "Email",
       password: "Heslo",
-      create: "Vytvořit",
       first_name: "Jméno",
       last_name: "Příjmení",
       permission: "Oprávnění",
+      name: "Jméno",
+      priority: "Priorita",
+      progress: "Postup",
+      deadline: "Konečný termín",
+      impact: "Ovlivněné oddělení",
+      search: "Hledat",
+      assignee: "Odpovědná osoba",
+      description: "Popis",
+      status: "Stav",
+      close: "Zavřít",
+      submit: "Odeslat"
     }
   }
 };
 
 const i18n = new VueI18n({
-  locale: "en",
+  locale: localStorage.getItem("lang") || "en",
   messages
 });
 

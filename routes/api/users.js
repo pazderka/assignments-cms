@@ -60,18 +60,23 @@ router.post("/permission", auth, async (req, res) => {
 router.put("/delegate", auth, async (req, res) => {
   const projectId = req.body.projectId;
   const delegatedTo = req.body.delegatedTo;
-  const user = await User.findOne({
-    where: {
-      email: delegatedTo
-    }
-  });
 
-  const project = await Project.findByPk(projectId);
-  project.assignee = delegatedTo;
-  project.delegatedTo = delegatedTo;
-  project.UserId = user.id;
-  await project.save();
-  res.status(200).json(project);
+  try {
+    const user = await User.findOne({
+      where: {
+        email: delegatedTo
+      }
+    });
+
+    const project = await Project.findByPk(projectId);
+    project.assignee = delegatedTo;
+    project.delegatedTo = delegatedTo;
+    project.UserId = user.id;
+    await project.save();
+    res.status(200).json(project);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 

@@ -56,7 +56,7 @@
                 @click="createEmployee"
                 color="light-blue"
                 dark
-                >{{ $t("common.create") }}</VBtn
+                >{{ $t("common.submit") }}</VBtn
               >
             </VCol>
           </VRow>
@@ -105,9 +105,8 @@ export default {
 
   methods: {
     async createEmployee() {
+      if (!this.$refs.createUserForm.validate()) return;
       this.isSubmitting = true;
-      this.$refs.createUserForm.validate();
-      if (!this.isValid) return;
 
       try {
         await axios.post("/api/users", this.form);

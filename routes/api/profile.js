@@ -30,8 +30,9 @@ router.get("/me", auth, async (req, res) => {
 
 router.post("/", [auth, [
   check("office", "Office is required").not().isEmpty(),
-  check("teamLeader", "Team leader is required").not().isEmpty(),
+  check("manager", "Manager is required").not().isEmpty(),
 ]], async (req, res) => {
+  console.log(req.body.manager);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -63,7 +64,7 @@ router.post("/", [auth, [
     const profile = await Profile.create({
       office: req.body.office,
       position: req.body.position || "employee",
-      teamLeader: req.body.teamLeader,
+      manager: req.body.manager,
       tasksToday: projects.count,
       UserId
     });

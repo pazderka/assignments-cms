@@ -1,11 +1,17 @@
 const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const path = require('path');
 module.exports = {
   entry: {
     'js/cms': path.resolve(__dirname, 'assets/js/app.js'),
-    'scss/cms': path.resolve(__dirname, 'assets/scss/main.scss'),
+    'css/main': path.resolve(__dirname, 'assets/scss/main.scss'),
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
@@ -31,9 +37,39 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader'
       },
+      {
+        test: /\.s(c|a)ss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            }
+          },
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+              sassOptions: {
+                indentedSyntax: false // optional
+              },
+            },
+          }
+        ]
+      },
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
+      },
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css'
+    }),
+    new CleanWebpackPlugin(),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: './index.html',
@@ -44,17 +80,12 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       'cms': path.resolve(__dirname, 'assets/js/components/'),
       'views': path.resolve(__dirname, 'assets/js/views/'),
+      'loginBase': path.resolve(__dirname, 'assets/js/components/base/loginBase/'),
+      'homeBase': path.resolve(__dirname, 'assets/js/components/base/homeBase/'),
       'projectBase': path.resolve(__dirname, 'assets/js/components/base/projectBase/'),
-      'employeeBase': path.resolve(__dirname, 'assets/js/components/base/employeeBase/')
+      'employeeBase': path.resolve(__dirname, 'assets/js/components/base/employeeBase/'),
+      'statisticBase': path.resolve(__dirname, 'assets/js/components/base/statisticBase/')
     },
     extensions: ['*', '.js', '.vue', '.json']
-  },
-
-  devServer: {
-    historyApiFallback: true,
-    contentBase: "./dist",
-    proxy: {
-      "/api": "http://localhost:5000"
-    }
   },
 };

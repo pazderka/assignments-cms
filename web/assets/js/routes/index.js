@@ -1,25 +1,23 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Dashboard from 'views/Dashboard';
-import ProjectBase from 'views/ProjectBase';
+import Home from 'views/Home';
+import Projects from 'views/Projects';
 import Profile from 'views/Profile';
 import Employees from 'views/Employees';
-import axios from "axios";
+import Statistics from 'views/Statistics';
 
 Vue.use(VueRouter);
-
-import { store } from "../store";
 
 const routes = [
   {
     path: '/',
-    name: 'Dashboard',
-    component: Dashboard,
+    name: 'Home',
+    component: Home,
   },
   {
     path: '/project-base',
-    name: 'Project Base',
-    component: ProjectBase
+    name: 'Projects',
+    component: Projects
   },
   {
     path: "/profile",
@@ -30,6 +28,11 @@ const routes = [
     path: "/employees",
     name: "Employees",
     component: Employees,
+  },
+  {
+    path: "/statistic-base",
+    name: "Statistics",
+    component: Statistics,
   }
 ];
 

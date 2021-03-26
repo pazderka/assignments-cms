@@ -26,11 +26,11 @@
           </VListItemIcon>
           <VListItemTitle>{{ $t("dashboard.employees") }}</VListItemTitle>
         </VListItem>
-        <VListItem to="/my-statistics">
+        <VListItem to="/statistic-base">
           <VListItemIcon>
             <VIcon>mdi-account-star</VIcon>
           </VListItemIcon>
-          <VListItemTitle>{{ $t("dashboard.my_statistics") }}</VListItemTitle>
+          <VListItemTitle>{{ $t("dashboard.statistic_base") }}</VListItemTitle>
         </VListItem>
       </VListItemGroup>
     </VList>

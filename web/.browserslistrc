@@ -1,0 +1,6 @@
+defaults
+not dead
+last 2 versions
+not ie <= 11
+not edge <= 88
+not ie_mob <= 11
