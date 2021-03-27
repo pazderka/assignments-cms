@@ -3,36 +3,50 @@
     <template v-slot:activator="{ on, attrs }">
       <VRow>
         <VCol cols="12">
-          <VBtn data-id="complete" @click="completeProject" dark color="success"
-            >Complete</VBtn
+          <VBtn
+            data-id="complete"
+            @click="completeProject"
+            dark
+            color="success"
+            >{{ $t("subcontent.complete") }}</VBtn
           >
           <VBtn
+            v-if="user.permission === 'manager' || user.permission === 'hr'"
             @click="openDialog"
             dark
             color="light-blue"
             v-bind="attrs"
             v-on="on"
             data-id="update"
-            >Update</VBtn
+            >{{ $t("subcontent.update") }}</VBtn
           >
           <VBtn
+            v-if="user.permission === 'manager'"
             @click="openDialog"
             dark
             color="amber darken-2"
             v-bind="attrs"
             v-on="on"
             data-id="delegate"
-            >Delegate</VBtn
+            >{{ $t("subcontent.delegate") }}</VBtn
           >
-          <VBtn data-id="delete" @click="deleteProject" dark color="error"
-            >Delete</VBtn
+          <VBtn
+            v-if="user.permission === 'manager' || user.permission === 'hr'"
+            data-id="delete"
+            @click="deleteProject"
+            dark
+            color="error"
+            >{{ $t("subcontent.delete") }}</VBtn
           >
         </VCol>
       </VRow>
     </template>
     <VCard>
       <VCardTitle>
-        <span :class="$style.head">Project {{ rowId }} - {{ dialogType }}</span>
+        <span :class="$style.head"
+          >{{ $t("subcontent.project") }} {{ rowId }} -
+          {{ $t(`subcontent.${dialogType}`) }}</span
+        >
       </VCardTitle>
       <VCardText>
         <VContainer>
@@ -44,42 +58,46 @@
                   v-model="delegatedEmployee"
                   dense
                   outlined
-                  label="Select employee"
+                  :label="$t('subcontent.select_employee')"
                 ></VSelect>
               </VForm>
               <VForm v-if="dialogType === 'update'">
-                <VTextField v-model="form.name" required label="Name" />
+                <VTextField
+                  v-model="form.name"
+                  required
+                  :label="$t('common.name')"
+                />
                 <VSelect
                   :items="$PRIORITIES"
                   v-model="form.priority"
                   required
-                  label="Priority"
+                  :label="$t('common.priority')"
                 />
                 <VTextField
                   v-model="form.progress"
                   type="number"
                   required
-                  label="Progress"
+                  :label="$t('common.progress')"
                 />
                 <DatePickerMenuForm :value.sync="form.deadline" />
                 <VSelect
                   :items="$DEPARTMENTS"
                   v-model="form.impact"
                   required
-                  label="Impact"
+                  :label="$t('common.impact')"
                 />
                 <VSelect
                   :items="assignees"
                   v-model="form.assignee"
                   required
                   type="email"
-                  label="Assignee"
+                  :label="$t('common.assignee')"
                 />
                 <VTextarea
                   v-model="form.description"
                   outlined
                   required
-                  label="Description"
+                  :label="$t('common.description')"
                 />
               </VForm>
             </VCol>
@@ -90,10 +108,12 @@
       <VCardActions>
         <VContainer>
           <div class="justify-space-between d-flex">
-            <VBtn dark color="amber darken-2" @click="dialog = false"
-              >Close</VBtn
-            >
-            <VBtn dark color="light-blue" @click="submit">Submit</VBtn>
+            <VBtn dark color="amber darken-2" @click="dialog = false">{{
+              $t("common.close")
+            }}</VBtn>
+            <VBtn dark color="light-blue" @click="submit">{{
+              $t("common.submit")
+            }}</VBtn>
           </div>
         </VContainer>
       </VCardActions>
@@ -104,6 +124,7 @@
 <script>
 import axios from "axios";
 import DatePickerMenuForm from "cms/layout/DatePickerMenuForm";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
@@ -190,23 +211,23 @@ export default {
     },
 
     async deleteProject() {
-      const shouldDelete = confirm(
-        `Are you sure you want to delete project ${this.rowId}?`
-      );
+      const shouldDelete = confirm(this.$t("subcontent.delete_project"));
       if (shouldDelete) {
         await axios.delete(`api/project/${this.rowId}`);
         this.$emit("updateTable");
       }
     },
     async completeProject() {
-      const shouldComplete = confirm(
-        `Are you sure you want to mark project #${this.rowId} as completed?`
-      );
+      const shouldComplete = confirm(this.$t("subcontent.complete_project"));
       if (shouldComplete) {
         await axios.put(`/api/project/complete/${this.rowId}`);
         this.$emit("updateTable");
       }
     },
+  },
+
+  computed: {
+    ...mapGetters("login", ["user"]),
   },
 };
 </script>

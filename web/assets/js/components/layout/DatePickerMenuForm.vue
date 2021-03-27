@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on, attrs }">
       <VTextField
         v-model="date"
-        label="Deadline"
+        :label="$t('common.deadline')"
         prepend-icon="mdi-calendar"
         readonly
         v-bind="attrs"

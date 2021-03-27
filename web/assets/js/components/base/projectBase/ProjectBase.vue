@@ -3,7 +3,10 @@
     <VCol cols="12">
       <div class="d-flex justify-space-between">
         <div>
-          <AddProjectForm @updateTable="updateTable" />
+          <AddProjectForm
+            v-if="user.permission === 'manager'"
+            @updateTable="updateTable"
+          />
           <VBtn dark color="amber darken-2" @click="clearFilters">{{
             $t("project_base.clear_filters")
           }}</VBtn>
@@ -119,14 +122,12 @@ import moment from "moment-timezone";
 import Subcontent from "projectBase/Subcontent";
 import DatePickerMenu from "cms/layout/DatePickerMenu";
 import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
-import FilterWidget from "projectBase/FilterWidget";
 import AddProjectForm from "projectBase/AddProjectForm";
 import { mapGetters } from "vuex";
 
 export default {
   components: {
     Subcontent,
-    FilterWidget,
     DatePickerMenu,
     AddProjectForm,
   },
@@ -218,7 +219,7 @@ export default {
             }
 
             return this.filteredHeaders.priority.includes(
-              value.toString().toLowerCase().trim()
+              value.toString().trim()
             );
           },
         },
@@ -484,6 +485,10 @@ tr.v-data-table__selected {
 .projectTable {
   .filters {
     background-color: #f3f3f3;
+
+    @media only screen and (max-width: 960px) {
+      display: none;
+    }
   }
 
   tr {

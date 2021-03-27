@@ -12,12 +12,12 @@
               >: {{ profile.office }}
             </li>
             <li>
-              <strong>{{ $t("dashboard.position") }}</strong
-              >: {{ profile.position }}
+              <strong>{{ $t("dashboard.department") }}</strong
+              >: {{ profile.department }}
             </li>
             <li>
               <strong>{{ $t("dashboard.team_leader") }}</strong
-              >: {{ profile.teamLeader }}
+              >: {{ profile.manager }}
             </li>
             <li class="pb-5">
               <strong>{{ $t("dashboard.tasks_for_today") }}</strong
@@ -78,11 +78,13 @@
 <script>
 import InfoBox from "cms/layout/InfoBox";
 import Chart from "cms/layout/Chart";
-import moment from "moment-timezone";
-import { mapGetters } from "vuex";
 import axios from "axios";
+import { mapGetters } from "vuex";
+import { HomeBaseMixin } from "cms/HomeBaseMixin";
+import { DateTimeMixin } from "cms/DateTimeMixin";
 
 export default {
+  mixins: [HomeBaseMixin, DateTimeMixin],
   name: "Dashboard",
   components: {
     InfoBox,
@@ -91,14 +93,14 @@ export default {
 
   async created() {
     if (this.profile.msg === "There is no profile for this user") {
-      this.$router.push("/profile");
+      this.$router.push(this.getProfileRoute());
       return;
     }
 
-    const lastProject = await axios.post("/api/project/last", {
+    const { data } = await axios.post(this.getLastProjectUrl(), {
       assignee: this.user.email,
     });
-    this.lastProject = lastProject.data[0];
+    this.lastProject = data[0];
   },
 
   data() {
@@ -109,14 +111,14 @@ export default {
 
   methods: {
     redirect() {
-      this.$router.push(`/project-base?row=${this.lastProject.id}`);
+      this.$router.push(this.getProjectId(this.lastProject.id));
     },
   },
 
   computed: {
     ...mapGetters("login", ["profile", "user"]),
     formattedDeadline() {
-      return moment(this.lastProject.deadline).format("YYYY/MM/DD");
+      return this.formatDate(this.lastProject.deadline);
     },
   },
 };

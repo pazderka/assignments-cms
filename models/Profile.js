@@ -8,11 +8,6 @@ Profile.init({
   // Model attributes are defined here
   office: {
     type: DataTypes.STRING,
-    allowNull: false
-  },
-
-  position: {
-    type: DataTypes.STRING,
     allowNull: false,
   },
 
@@ -26,9 +21,14 @@ Profile.init({
     allowNull: false,
   },
 
+  department: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
 }, {
-  sequelize, // We need to pass the connection instance
-  modelName: "Profile" // We need to choose the model name
+  sequelize,
+  modelName: "Profile"
 });
 
 module.exports = Profile;

@@ -21,22 +21,13 @@
         </template>
         <VCard>
           <VList>
-            <VListItem link @click="userMenu = false">
+            <VListItem link @click="logout">
               <VListItemAction>
                 <VBtn icon>
                   <VIcon> mdi-logout </VIcon>
                 </VBtn>
               </VListItemAction>
-              <VListItemTitle @click="logout">Logout</VListItemTitle>
-            </VListItem>
-
-            <VListItem link @click="userMenu = false">
-              <VListItemAction>
-                <VBtn icon>
-                  <VIcon> mdi-account-cog </VIcon>
-                </VBtn>
-              </VListItemAction>
-              <VListItemTitle>Settings</VListItemTitle>
+              <VListItemTitle>Logout</VListItemTitle>
             </VListItem>
           </VList>
         </VCard>

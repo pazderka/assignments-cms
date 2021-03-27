@@ -13,9 +13,9 @@
 </template>
 
 <script>
+import LoginForm from "loginBase/LoginForm";
 import { mapActions } from "vuex";
 import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
-import LoginForm from "loginBase/LoginForm";
 
 export default {
   components: {

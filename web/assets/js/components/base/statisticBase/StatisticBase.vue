@@ -3,8 +3,12 @@
     <VRow>
       <VCol cols="12" lg="6" md="6">
         <VCard>
-          <VCardTitle>All completed projects</VCardTitle>
-          <VCardSubtitle>Trailing 12 months</VCardSubtitle>
+          <VCardTitle>{{
+            $t("statistic_base.all_completed_projects_months")
+          }}</VCardTitle>
+          <VCardSubtitle>{{
+            $t("statistic_base.trailing_12_months")
+          }}</VCardSubtitle>
           <VCardText>
             <canvas class="ALL_COMPLETED_PROJECTS"></canvas>
           </VCardText>
@@ -12,8 +16,12 @@
       </VCol>
       <VCol cols="12" lg="6" md="6">
         <VCard>
-          <VCardTitle>Number of projects by months</VCardTitle>
-          <VCardSubtitle>Trailing 12 months</VCardSubtitle>
+          <VCardTitle>{{
+            $t("statistic_base.all_projects_months")
+          }}</VCardTitle>
+          <VCardSubtitle>{{
+            $t("statistic_base.trailing_12_months")
+          }}</VCardSubtitle>
           <VCardText>
             <canvas class="NUMBER_OF_PROJECTS_MONTHS"></canvas
           ></VCardText>
@@ -23,15 +31,19 @@
     <VRow>
       <VCol cols="12" lg="6" md="6">
         <VCard>
-          <VCardTitle>All employees</VCardTitle>
-          <VCardSubtitle>All offices</VCardSubtitle>
+          <VCardTitle>{{
+            $t("statistic_base.all_employees_offices")
+          }}</VCardTitle>
+          <VCardSubtitle>{{ $t("statistic_base.all_time") }}</VCardSubtitle>
           <VCardText><canvas class="ALL_EMPLOYEES_OFFICES"></canvas></VCardText>
         </VCard>
       </VCol>
       <VCol cols="12" lg="6" md="6">
         <VCard>
-          <VCardTitle>Employees per department</VCardTitle>
-          <VCardSubtitle>All employees / departments</VCardSubtitle>
+          <VCardTitle>{{
+            $t("statistic_base.all_employees_departments")
+          }}</VCardTitle>
+          <VCardSubtitle>{{ $t("statistic_base.all_time") }}</VCardSubtitle>
           <VCardText
             ><canvas class="ALL_EMPLOYEES_DEPARTMENTS"></canvas
           ></VCardText>
@@ -49,7 +61,11 @@ export default {
     return {};
   },
   async mounted() {
-    await this.drawCharts();
+    await this.drawCharts({
+      months: this.$MONTHS,
+      offices: this.$OFFICES,
+      departments: this.$DEPARTMENTS,
+    });
   },
 
   methods: {
@@ -57,6 +73,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" module>
-</style>

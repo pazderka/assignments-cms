@@ -1,17 +1,22 @@
 import Chart from 'chart.js';
 import axios from "axios";
+import moment from "moment-timezone";
 
 export default {
   namespaced: true,
   state: {
     drawer: false,
+    allCompletedProjects: null
   },
   mutations: {
     createChart(_, payload) {
-      const selector = payload.selector;
       if (!payload) return;
-      const data = payload.data;
+
+      const selector = payload.selector;
       const ctx = document.querySelector(selector);
+      if (!ctx) return;
+
+      const data = payload.data;
       new Chart(ctx, {
         responsive: true,
         type: 'bar',
@@ -41,17 +46,70 @@ export default {
       context.commit('createChart', payload);
     },
 
-    async drawCharts(context) {
+    async drawCharts(context, payload) {
+      const { data } = await axios.get("/api/statistic/");
+      const { months, offices, departments } = payload;
+
+      console.log(departments);
+
+      const allCompletedProjects = months.map((month) => {
+        return data.allProjects.map((project) => {
+          const shouldCount = month === moment(project.deadline).format("MMMM") && project.status === "Completed";
+
+          if (shouldCount) {
+            return true;
+          }
+
+          return false;
+        });
+      }).map((arr) => arr.filter(Boolean).length);
+
+      const numberOfProjectsMonths = months.map((month) => {
+        return data.allProjects.map((project) => {
+          const shouldCount = month === moment(project.deadline).format("MMMM");
+
+          if (shouldCount) {
+            return true;
+          }
+
+          return false;
+        });
+      }).map((arr) => arr.filter(Boolean).length);
+
+      const allEmployeesOffices = offices.map((office) => {
+        return data.allProfiles.map((user) => {
+          const shouldCount = office === user.office;
+
+          if (shouldCount) {
+            return true;
+          }
+
+          return false;
+        });
+      }).map((arr) => arr.filter(Boolean).length);
+
+      const allEmployeesDepartments = departments.map((department) => {
+        return data.allProfiles.map((user) => {
+          const shouldCount = department === user.department;
+
+          if (shouldCount) {
+            return true;
+          }
+
+          return false;
+        });
+      }).map((arr) => arr.filter(Boolean).length);
+
       const chartTypes = ["ALL_COMPLETED_PROJECTS", "NUMBER_OF_PROJECTS_MONTHS", "ALL_EMPLOYEES_OFFICES", "ALL_EMPLOYEES_DEPARTMENTS"];
 
       const chartsConfig = {
         ALL_COMPLETED_PROJECTS: {
           type: "line",
           data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            labels: months,
             datasets: [{
-              label: "All completed projects",
-              data: [10, 10, 20, 10, 30, 23, 19, 29, 29, 19, 49, 20],
+              label: "Projects / Month / Completed",
+              data: allCompletedProjects,
               backgroundColor: '#ffa000',
             }]
           },
@@ -59,10 +117,10 @@ export default {
         NUMBER_OF_PROJECTS_MONTHS: {
           type: "bar",
           data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            labels: months,
             datasets: [{
-              label: "Number of projects / month",
-              data: [10, 10, 20, 10, 30, 23, 19, 29, 29, 19, 49, 20],
+              label: "Projects / Month / All",
+              data: numberOfProjectsMonths,
               backgroundColor: '#03a8f4',
             }]
           },
@@ -70,10 +128,10 @@ export default {
         ALL_EMPLOYEES_OFFICES: {
           type: "pie",
           data: {
-            labels: ["London", "Prague", "Bucharest", "Los Angeles"],
+            labels: offices,
             datasets: [{
               label: "Number of employees / office",
-              data: [10, 10, 20, 10],
+              data: allEmployeesOffices,
               backgroundColor: [
                 "#009688",
                 "#CDDC39",
@@ -86,10 +144,10 @@ export default {
         ALL_EMPLOYEES_DEPARTMENTS: {
           type: "pie",
           data: {
-            labels: ["IT", "HR", "MKT"],
+            labels: departments,
             datasets: [{
               label: "Number of employees / department",
-              data: [10, 10, 20],
+              data: allEmployeesDepartments,
               backgroundColor: [
                 "#F44336",
                 "#9C27B0",

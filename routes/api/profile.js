@@ -1,14 +1,19 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
+const auth = require("../../middleware/auth");
+const { check, validationResult } = require("express-validator");
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
 const Project = require("../../models/Project");
-const bcrypt = require("bcryptjs");
 
-const auth = require("../../middleware/auth");
-const { check, validationResult } = require("express-validator");
-
+/**
+ * @path : "/me"
+ * @req : get
+ * @isAuth : true
+ * @purpose :  Get logged in user profile
+ */
 router.get("/me", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
@@ -28,11 +33,17 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
+/**
+ * @path : "/"
+ * @req : post
+ * @isAuth : true
+ * @purpose :  Create user profile
+ */
 router.post("/", [auth, [
   check("office", "Office is required").not().isEmpty(),
   check("manager", "Manager is required").not().isEmpty(),
+  check("department", "Department is required").not().isEmpty(),
 ]], async (req, res) => {
-  console.log(req.body.manager);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -44,8 +55,6 @@ router.post("/", [auth, [
   const user = await User.findByPk(UserId);
   const userEmail = user.email;
 
-
-  // create new pw
   const salt = await bcrypt.genSalt(10);
   const new_password = req.body.password;
   const hashedPassword = await bcrypt.hash(new_password, salt);
@@ -59,21 +68,20 @@ router.post("/", [auth, [
     }
   });
 
-
   try {
+    const { office, department, manager } = req.body;
     const profile = await Profile.create({
-      office: req.body.office,
-      position: req.body.position || "employee",
-      manager: req.body.manager,
+      office,
+      department,
+      manager,
       tasksToday: projects.count,
       UserId
     });
 
-
-
     res.status(200).json(profile);
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err.message);
+    res.status(500).send("Server error");
   }
 });
 

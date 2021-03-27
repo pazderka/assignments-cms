@@ -21,8 +21,8 @@ const messages = {
       credentials: "Credentials",
       credentials_subtitle: "Your company status",
       office: "Office",
-      position: "Position",
-      team_leader: "Team leader",
+      department: "Department",
+      team_leader: "Manager",
       tasks_for_today: "Tasks for today",
       your_projects: "Your projects",
       your_projects_subtitle: "Trailing 12 months",
@@ -42,6 +42,28 @@ const messages = {
       global_search: "Global search...",
       add_project: "Add project",
       add_new_project: "Add new project",
+    },
+    subcontent: {
+      project_info: "Project Info",
+      description: "Description",
+      actions: "Actions",
+      row_expanded: "Actions you are allowed to do to modify this project.",
+      complete: "Complete",
+      update: "Update",
+      delegate: "Delegate",
+      delete: "Delete",
+      project: "Project",
+      select_employee: "Select employee",
+      complete_project: "Are you sure you want to complete this project?",
+      delete_project: "Are you sure you want to delete this project?"
+    },
+    statistic_base: {
+      all_completed_projects_months: "All completed projects by month",
+      trailing_12_months: "Trailing 12 months",
+      all_projects_months: "All projects by month",
+      all_employees_offices: "All employees by office",
+      all_time: "All time",
+      all_employees_departments: "All employees by department",
     },
     translations: {
       cz: "Česky",
@@ -82,7 +104,7 @@ const messages = {
       credentials: "Osobní údaje",
       credentials_subtitle: "Váš status ve firmě",
       office: "Kancelář",
-      position: "Pozice",
+      department: "Oddělení",
       team_leader: "Nadřízený",
       tasks_for_today: "Úkoly pro dnešek",
       your_projects: "Vaše projekty",
@@ -103,6 +125,28 @@ const messages = {
       global_search: "Globální vyhledávání...",
       add_project: "Přidat projekt",
       add_new_project: "Přidat nový projekt",
+    },
+    subcontent: {
+      project_info: "Informace o projektu",
+      description: "Popis",
+      actions: "Akce",
+      row_expanded: "Akce, ke kterým máte v tomto projektu přístup.",
+      complete: "Splnit",
+      update: "Aktualizovat",
+      delegate: "Delegovat",
+      delete: "Smazat",
+      project: "Projekt",
+      select_employee: "Vyberte zaměstnance",
+      complete_project: "Opravdu chcete splnit tento projekt?",
+      delete_project: "Opravdu chcete smazat tento projekt?"
+    },
+    statistic_base: {
+      all_completed_projects_months: "Hotové projekty po měsících",
+      trailing_12_months: "Posledních 12 měsíců",
+      all_projects_months: "Všechny projekty po měsících",
+      all_employees_offices: "Všichni zaměstnanci podle kanceláří",
+      all_time: "Za celou dobu",
+      all_employees_departments: "Všichni zaměstnanci podle oddělení",
     },
     translations: {
       cz: "Czech",
@@ -146,7 +190,7 @@ const i18n = new VueI18n({
 });
 
 Vue.prototype.$LANGUAGES = ["en", "cz"];
-Vue.prototype.$PERMISSIONS = ["admin", "manager", "hr", "employee"];
+Vue.prototype.$PERMISSIONS = ["manager", "hr", "employee"];
 Vue.prototype.$OFFICES = ["Prague", "London", "Bucharest", "Los Angeles"];
 Vue.prototype.$MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 Vue.prototype.$STATUSES = ["New", "In Progress", "Completed"];

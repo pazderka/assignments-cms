@@ -83,6 +83,7 @@ module.exports = {
       'loginBase': path.resolve(__dirname, 'assets/js/components/base/loginBase/'),
       'homeBase': path.resolve(__dirname, 'assets/js/components/base/homeBase/'),
       'projectBase': path.resolve(__dirname, 'assets/js/components/base/projectBase/'),
+      'profileBase': path.resolve(__dirname, 'assets/js/components/base/profileBase/'),
       'employeeBase': path.resolve(__dirname, 'assets/js/components/base/employeeBase/'),
       'statisticBase': path.resolve(__dirname, 'assets/js/components/base/statisticBase/')
     },

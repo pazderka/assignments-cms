@@ -1,15 +1,17 @@
 <template>
   <VCard>
     <VToolbar color="light-blue" dark>
-      <VToolbarTitle>Project Info - #{{ this.rowId }}</VToolbarTitle>
+      <VToolbarTitle
+        >{{ $t("subcontent.project_info") }} - #{{ this.rowId }}</VToolbarTitle
+      >
       <template v-slot:extension>
         <VTabs
           @change="changeTab"
           v-model="model"
           slider-color="amber darken-2"
         >
-          <VTab> Description </VTab>
-          <VTab> Actions </VTab>
+          <VTab> {{ $t("subcontent.description") }} </VTab>
+          <VTab> {{ $t("subcontent.actions") }} </VTab>
         </VTabs>
       </template>
     </VToolbar>
@@ -29,7 +31,7 @@
           <VCardText>
             <VRow justify="center">
               <VCol cols="12">
-                <p>Actions you are allowed to do to modify this project</p>
+                <p>{{ $t("subcontent.row_expanded") }}</p>
                 <div class="text-center">
                   <ProjectActionForm
                     @updateTable="updateTable"

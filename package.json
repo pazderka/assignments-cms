@@ -7,7 +7,7 @@
     "start": "node server",
     "server": "nodemon server",
     "client": "cd web && yarn watch",
-    "dev": "concurrently \"yarn server\" \"yarn client\""
+    "dev": "concurrently \"kill $(lsof -ti:5000)\" \"yarn server\" \"yarn client\""
   },
   "author": "Pazderka",
   "license": "MIT",

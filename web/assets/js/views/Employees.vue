@@ -6,6 +6,7 @@
 import EmployeeBase from "employeeBase/EmployeeBase";
 import { mapGetters } from "vuex";
 export default {
+  name: "Employees",
   components: {
     EmployeeBase,
   },
@@ -14,12 +15,15 @@ export default {
       this.$router.push("/profile");
       return;
     }
+
+    if (this.user.permission !== "hr") {
+      this.$router.push("/");
+      return;
+    }
   },
   computed: {
     ...mapGetters("login", ["profile"]),
+    ...mapGetters("login", ["user"]),
   },
 };
 </script>
-
-<style>
-</style>

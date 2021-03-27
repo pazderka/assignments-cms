@@ -20,7 +20,7 @@
           </VListItemIcon>
           <VListItemTitle>{{ $t("dashboard.project_base") }}</VListItemTitle>
         </VListItem>
-        <VListItem to="/employees">
+        <VListItem to="/employees" v-if="user.permission === 'hr'">
           <VListItemIcon>
             <VIcon>mdi-account-group</VIcon>
           </VListItemIcon>
@@ -44,6 +44,7 @@ export default {
   name: "SideBar",
   computed: {
     ...mapGetters("layout", ["getDrawerState"]),
+    ...mapGetters("login", ["user"]),
   },
 };
 </script>

@@ -32,17 +32,16 @@ router.get("/", auth, async (req, res) => {
  * @purpose :  Create new user by HR member
  */
 router.post("/", [
-  check("email", "Please include a valid email.").isEmail(),
-  check("password", "Password is required.").exists()
+  check("email", "Please include a valid email").isEmail(),
+  check("email", "Email is required").not().isEmpty(),
+  check("password", "Password is required").exists()
 ], async (req, res) => {
   const errors = validationResult(req);
 
-  // Check for errors
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  // Check if user exists
   const { email, password } = req.body;
 
   try {
@@ -52,35 +51,29 @@ router.post("/", [
       }
     });
 
-    // User doesnt exist
     if (!user) {
       return res.status(400).json({ errors: [{ msg: "Invalid credentials." }] });
     }
 
-    // Check if passwords match
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(400).json({ errors: [{ msg: "Bad Password" }] });
     }
 
     const payload = {
       user: {
-        id: user.id // this is given to because its auto-generated in db (callback)
+        id: user.id
       }
     };
 
     // TODO: Set lower size of expiration token
     jwt.sign(payload, jwtSecret, { expiresIn: 3600000 }, (err, token) => {
       if (err) throw err;
-
       res.json({ token });
     });
   } catch (error) {
     res.status(500).json(error);
   }
-
 });
 
 module.exports = router;
-
