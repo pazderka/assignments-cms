@@ -1,11 +1,10 @@
-const path = require('path');
-const common = require('./webpack.common');
-const { merge } = require('webpack-merge');
+const common = require("./webpack.common");
+const { merge } = require("webpack-merge");
 
 module.exports = merge(common, {
   target: "web",
-  mode: 'development',
-  devtool: 'source-map',
+  mode: "development",
+  devtool: "source-map",
   devServer: {
     historyApiFallback: true,
     contentBase: "./dist",

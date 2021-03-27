@@ -9,49 +9,7 @@ export default {
     allCompletedProjects: null
   },
   mutations: {
-    createChart(_, payload) {
-      if (!payload) return;
-
-      const selector = payload.selector;
-      const ctx = document.querySelector(selector);
-      if (!ctx) return;
-
-      const data = payload.data;
-      new Chart(ctx, {
-        responsive: true,
-        type: 'bar',
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [{
-            label: "Projects",
-            data,
-            backgroundColor: '#ffa000',
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
-    },
-
-  },
-  actions: {
-    createChart(context, payload) {
-      context.commit('createChart', payload);
-    },
-
-    async drawCharts(context, payload) {
-      const { data } = await axios.get("/api/statistic/");
-      const { months, offices, departments } = payload;
-
-      console.log(departments);
-
+    drawCharts(_, { months, offices, departments, data }) {
       const allCompletedProjects = months.map((month) => {
         return data.allProjects.map((project) => {
           const shouldCount = month === moment(project.deadline).format("MMMM") && project.status === "Completed";
@@ -178,7 +136,50 @@ export default {
           ...chartConfig
         });
       }
+    },
 
+    createChart(_, payload) {
+      if (!payload) return;
+
+      const selector = payload.selector;
+      const ctx = document.querySelector(selector);
+      if (!ctx) return;
+
+      const data = payload.data;
+      new Chart(ctx, {
+        responsive: true,
+        type: 'bar',
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+          datasets: [{
+            label: "Projects",
+            data,
+            backgroundColor: '#ffa000',
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    },
+
+  },
+  actions: {
+    createChart(context, payload) {
+      context.commit('createChart', payload);
+    },
+
+    async drawCharts(context, payload) {
+      const { data } = await axios.get("/api/statistic/");
+      const { months, offices, departments } = payload;
+
+      context.commit("drawCharts", { months, offices, departments, data });
     },
 
   },
