@@ -125,8 +125,12 @@
 import axios from "axios";
 import DatePickerMenuForm from "cms/layout/DatePickerMenuForm";
 import { mapGetters } from "vuex";
+import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
+import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
 
 export default {
+  mixins: [NotificationMixin, ProjectBaseMixin],
+
   props: {
     rowId: {
       type: Number,
@@ -160,8 +164,13 @@ export default {
   },
 
   async mounted() {
-    const { data } = await axios.get("/api/users");
-    this.assignees = data.map((row) => row.email);
+    try {
+      const { data } = await axios.get(this.getUsersUrl());
+      this.assignees = data.map((row) => row.email);
+    } catch (err) {
+      console.error(err);
+      this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+    }
   },
   methods: {
     async openDialog(e) {
@@ -176,33 +185,51 @@ export default {
       this.dialogType = id;
 
       if (this.dialogType === "update") {
-        const response = await axios.get(`/api/project/${this.rowId}`);
+        try {
+          const response = await axios.get(this.getProjectByIdUrl(this.rowId));
 
-        for (const key in response.data) {
-          if (this.form[key] !== undefined) {
-            this.form[key] = response.data[key];
+          for (const key in response.data) {
+            if (this.form[key] !== undefined) {
+              this.form[key] = response.data[key];
+            }
           }
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
         }
       } else if (this.dialogType === "delegate") {
-        const response = await axios.get("/api/users");
+        try {
+          const response = await axios.get(this.getUsersUrl());
 
-        const employees = response.data.map((employee) => employee.email);
-        this.delegatedEmployees = employees;
+          const employees = response.data.map((employee) => employee.email);
+          this.delegatedEmployees = employees;
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       }
     },
     async submit() {
       if (this.dialogType === "update") {
-        await axios.put("/api/project/update", {
-          data: [this.form],
-        });
+        try {
+          await axios.put(this.getUpdateProjectUrl(), {
+            data: [this.form],
+          });
+          this.notifyMessage(MESSAGE_TYPES.SUCCESS.text);
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       } else if (this.dialogType === "delegate") {
         try {
-          await axios.put("/api/users/delegate", {
+          await axios.put(this.getDelegateProjectUrl(), {
             projectId: this.rowId,
             delegatedTo: this.delegatedEmployee,
           });
+          this.notifyMessage(MESSAGE_TYPES.SUCCESS.text);
         } catch (err) {
           console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
         }
       }
 
@@ -213,15 +240,27 @@ export default {
     async deleteProject() {
       const shouldDelete = confirm(this.$t("subcontent.delete_project"));
       if (shouldDelete) {
-        await axios.delete(`api/project/${this.rowId}`);
-        this.$emit("updateTable");
+        try {
+          await axios.delete(this.getProjectByIdUrl(this.rowId));
+          this.$emit("updateTable");
+          this.notifyMessage(MESSAGE_TYPES.SUCCESS.text);
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       }
     },
     async completeProject() {
       const shouldComplete = confirm(this.$t("subcontent.complete_project"));
       if (shouldComplete) {
-        await axios.put(`/api/project/complete/${this.rowId}`);
-        this.$emit("updateTable");
+        try {
+          await axios.put(this.getCompleteProjectUrlById(this.rowId));
+          this.$emit("updateTable");
+          this.notifyMessage(MESSAGE_TYPES.SUCCESS.text);
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       }
     },
   },

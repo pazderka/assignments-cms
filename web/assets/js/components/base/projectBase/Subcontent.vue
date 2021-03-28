@@ -50,8 +50,11 @@
 <script>
 import axios from "axios";
 import ProjectActionForm from "projectBase/ProjectActionForm";
+import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
+import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
 
 export default {
+  mixins: [NotificationMixin, ProjectBaseMixin],
   components: {
     ProjectActionForm,
   },
@@ -83,16 +86,24 @@ export default {
   methods: {
     async changeTab(tab) {
       if (tab === 0) {
-        const response = await axios.post("/api/project/description", {
-          projectId: this.rowId,
-        });
-        this.info = response.data;
+        try {
+          const response = await axios.post(this.getDescriptionUrl(), {
+            projectId: this.rowId,
+          });
+          this.info = response.data;
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       } else if (tab === 1) {
-        const response = await axios.post("/api/users/permission", {
-          "x-auth-token": localStorage.getItem("token"),
-        });
-        const permission = response.data;
-        this.permission = permission;
+        try {
+          const response = await axios.post(this.getPermissionUrl());
+          const permission = response.data;
+          this.permission = permission;
+        } catch (err) {
+          console.error(err);
+          this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+        }
       }
     },
 
@@ -102,6 +113,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>

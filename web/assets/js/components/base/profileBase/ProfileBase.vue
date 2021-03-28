@@ -75,17 +75,24 @@
 import axios from "axios";
 import { mapGetters } from "vuex";
 import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
+import { ProfileMixin } from "cms/ProfileMixin";
 
 export default {
-  mixins: [NotificationMixin],
+  mixins: [NotificationMixin, ProfileMixin],
 
   async created() {
     if (this.profile.msg !== "There is no profile for this user") {
       this.$router.push("/");
       return;
     }
-    const managers = await axios.get("/api/users/manager");
-    this.managers = managers.data;
+
+    try {
+      const managers = await axios.get(this.getManagersUrl());
+      this.managers = managers.data;
+    } catch (err) {
+      console.error(err);
+      this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+    }
   },
 
   async mounted() {
@@ -123,7 +130,7 @@ export default {
           manager: this.form.manager.email,
           department: this.form.department,
         };
-        await axios.post("/api/profile", form);
+        await axios.post(this.getProfileUrl(), form);
         location.reload();
       } catch (err) {
         console.error(err);

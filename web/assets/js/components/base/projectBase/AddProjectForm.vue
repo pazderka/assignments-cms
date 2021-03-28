@@ -90,7 +90,12 @@
 import DatePickerMenuForm from "cms/layout/DatePickerMenuForm";
 import moment from "moment-timezone";
 import axios from "axios";
+import { NotificationMixin, MESSAGE_TYPES } from "cms/NotificationMixin";
+import { ProjectBaseMixin } from "cms/ProjectBaseMixin";
+
 export default {
+  mixins: [NotificationMixin, ProjectBaseMixin],
+
   components: {
     DatePickerMenuForm,
   },
@@ -115,15 +120,25 @@ export default {
   },
 
   async mounted() {
-    const { data } = await axios.get("/api/users");
-    this.assignees = data.map((row) => row.email);
+    try {
+      const { data } = await axios.get(this.getUsersUrl());
+      this.assignees = data.map((row) => row.email);
+    } catch (err) {
+      console.error(err);
+      this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+    }
   },
 
   methods: {
     async submit() {
-      await axios.post("/api/project", this.form);
-      this.dialog = false;
-      this.$emit("updateTable");
+      try {
+        await axios.post(this.getAddProjectUrl(), this.form);
+        this.dialog = false;
+        this.$emit("updateTable");
+      } catch (err) {
+        console.error(err);
+        this.notifyMessage(MESSAGE_TYPES.ERROR.text);
+      }
     },
 
     updateDate(new_value) {
