@@ -4,7 +4,6 @@ const sequelize = require("../config/db");
 class Project extends Model { }
 
 Project.init({
-  // Model attributes are defined here
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -56,8 +55,8 @@ Project.init({
   }
 
 }, {
-  sequelize, // We need to pass the connection instance
-  modelName: "Project" // We need to choose the model name
+  sequelize,
+  modelName: "Project"
 });
 
 module.exports = Project;

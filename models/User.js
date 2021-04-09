@@ -1,12 +1,12 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
+
 const Project = require('./Project');
 const Profile = require("./Profile");
 
 class User extends Model { }
 
 User.init({
-  // Model attributes are defined here
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -28,11 +28,10 @@ User.init({
     allowNull: false
   }
 }, {
-  sequelize, // We need to pass the connection instance
-  modelName: "User" // We need to choose the model name
+  sequelize,
+  modelName: "User"
 });
 
-// Associate models
 User.hasOne(Profile);
 Profile.belongsTo(User);
 

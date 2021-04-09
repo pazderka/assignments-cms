@@ -3,7 +3,6 @@ const sequelize = require("../config/db");
 class Profile extends Model { }
 
 Profile.init({
-  // Model attributes are defined here
   office: {
     type: DataTypes.STRING,
     allowNull: false,

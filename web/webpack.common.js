@@ -53,7 +53,7 @@ module.exports = {
             options: {
               implementation: require("sass"),
               sassOptions: {
-                indentedSyntax: false // optional
+                indentedSyntax: false
               },
             },
           }

@@ -55,6 +55,18 @@ router.put("/complete/:ProjectId", auth, async (req, res) => {
     const id = req.params.ProjectId;
     const project = await Project.findByPk(id);
 
+    const user = await User.findOne({
+      where: {
+        email: project.assignee
+      }
+    });
+
+    const profile = await Profile.findByPk(user.id);
+    const tasksToday = parseInt(profile.tasksToday);
+
+    profile.tasksToday = tasksToday - 1;
+    await profile.save();
+
     project.status = "Completed";
     await project.save();
     res.status(200).json("Project completed");
@@ -90,6 +102,20 @@ router.get("/:ProjectId", auth, async (req, res) => {
 router.delete("/:ProjectId", auth, async (req, res) => {
   try {
     const id = req.params.ProjectId;
+
+    const project = await Project.findByPk(id);
+    const user = await User.findOne({
+      where: {
+        email: project.assignee
+      }
+    });
+
+    const profile = await Profile.findByPk(user.id);
+    const tasksToday = parseInt(profile.tasksToday);
+
+    profile.tasksToday = tasksToday - 1;
+    await profile.save();
+
     await Project.destroy({
       where: {
         id

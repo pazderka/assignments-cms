@@ -3,12 +3,9 @@
     <VRow justify="center">
       <VCol cols="6">
         <VCard elevation="2">
-          <VCardTitle>Your Profile</VCardTitle>
+          <VCardTitle>{{ $t("confirm_profile.title") }}</VCardTitle>
           <VCardSubtitle>
-            <p>
-              If this is your first login, please fill in information that have
-              been given to you and also change your password.
-            </p>
+            <p>{{ $t("confirm_profile.sub_title") }}.</p>
           </VCardSubtitle>
           <VCardText>
             <VForm
@@ -20,7 +17,7 @@
                 :rules="required_rule"
                 v-model="form.office"
                 required
-                label="Office"
+                :label="$t('common.office')"
                 :items="$OFFICES"
               />
               <VSelect
@@ -32,21 +29,21 @@
                 single-line
                 v-model="form.manager"
                 required
-                label="Manager"
+                :label="$t('common.manager')"
               />
               <VSelect
                 :rules="required_rule"
                 :items="$DEPARTMENTS"
                 v-model="form.department"
                 required
-                label="Department"
+                :label="$t('common.department')"
               />
               <VTextField
                 :rules="required_rule"
                 v-model="form.password"
                 type="password"
                 required
-                label="New Password"
+                :label="$t('confirm_profile.change_password')"
               />
             </VForm>
           </VCardText>
@@ -57,11 +54,11 @@
                   @click="$refs.profileVerificationForm.reset()"
                   dark
                   color="amber darken-2"
-                  >Reset</VBtn
+                  >{{ $t("common.reset") }}</VBtn
                 >
-                <VBtn @click="verifyProfile" dark color="light-blue"
-                  >Verify profile</VBtn
-                >
+                <VBtn @click="verifyProfile" dark color="light-blue">{{
+                  $t("confirm_profile.verify_profile")
+                }}</VBtn>
               </VCol>
             </VRow>
           </VCardActions>
@@ -99,20 +96,6 @@ export default {
     this.$refs.profileVerificationForm.validate();
   },
 
-  data() {
-    return {
-      managers: [],
-      form: {
-        office: null,
-        manager: null,
-        password: null,
-        department: null,
-      },
-      isValid: false,
-      required_rule: [(val) => !!val || this.$t("common.field_required")],
-    };
-  },
-
   computed: {
     ...mapGetters("login", ["profile"]),
   },
@@ -137,6 +120,20 @@ export default {
         this.notifyMessage(MESSAGE_TYPES.ERROR.text);
       }
     },
+  },
+
+  data() {
+    return {
+      managers: [],
+      form: {
+        office: null,
+        manager: null,
+        password: null,
+        department: null,
+      },
+      isValid: false,
+      required_rule: [(val) => !!val || this.$t("common.field_required")],
+    };
   },
 };
 </script>

@@ -57,6 +57,12 @@ export const translations = {
       sign_in_subtitle: "Use your company email to log into CMS.",
       login: "Login",
     },
+    confirm_profile: {
+      title: "Your profile",
+      sub_title: "This is your first login, please fill in the information that have been given to you and change your password",
+      change_password: "Change password",
+      verify_profile: "Verify profile"
+    },
     employee: {
       create_new_employee: "Create new employee",
       initial_password: "Initial password",
@@ -79,7 +85,10 @@ export const translations = {
       description: "Description",
       status: "Status",
       close: "Close",
-      submit: "Submit"
+      submit: "Submit",
+      office: "Office",
+      manager: "Manager",
+      department: "Department"
     }
   },
   cz: {
@@ -140,6 +149,12 @@ export const translations = {
       sign_in_subtitle: "Použijte svůj firemní email pro přihlášení do CMS",
       login: "Přihlásit",
     },
+    confirm_profile: {
+      title: "Váš profil",
+      sub_title: "Tohle je Vaše první přihlášení, prosím vyplňte údaje, které Vám byly poskytnuty a změňte si heslo",
+      change_password: "Změnit heslo",
+      verify_profile: "Ověřit profil"
+    },
     employee: {
       create_new_employee: "Vytvořit nového uživatele",
       initial_password: "Původní heslo",
@@ -162,7 +177,10 @@ export const translations = {
       description: "Popis",
       status: "Stav",
       close: "Zavřít",
-      submit: "Odeslat"
+      submit: "Odeslat",
+      office: "Kancelář",
+      manager: "Nadřízený",
+      department: "Oddělení"
     }
   }
 };

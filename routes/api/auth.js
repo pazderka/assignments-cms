@@ -66,8 +66,7 @@ router.post("/", [
       }
     };
 
-    // TODO: Set lower size of expiration token
-    jwt.sign(payload, jwtSecret, { expiresIn: 3600000 }, (err, token) => {
+    jwt.sign(payload, jwtSecret, { expiresIn: "2h" }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
